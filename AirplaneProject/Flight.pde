@@ -24,6 +24,8 @@ class Flight {
   boolean cancelled;
   boolean diverted;
 
+  boolean missingData;
+
   int distance;
   String[] valuesInStringFormat = new String[18];
 
@@ -31,7 +33,12 @@ class Flight {
     flightMonth = safeInt(row[0].substring(0,2));
     flightDay = safeInt(row[0].substring(3,5));
     flightYear = safeInt(row[0].substring(6,10));
-
+    missingData = false;
+    for (String col : row) {
+      if (col.length() == 0) {
+        missingData = true;
+      }
+    }
     airlineCode = row[1];
     flightNumber = safeInt(row[2]);
 

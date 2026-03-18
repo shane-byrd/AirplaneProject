@@ -1,53 +1,105 @@
-/*class Screen {
-  color backgroundColor;
-  ArrayList<Widget> widgets;
-  ArrayList<radioButton> radioButtons;
-  ArrayList<Slider> sliders;
-  
-  Screen(color backgroundColor) {
-    widgets = new ArrayList<Widget>();
-    sliders = new ArrayList<Slider>();
-    radioButtons = new ArrayList<radioButton>();
-    this.backgroundColor=backgroundColor;
-  }
-  
-  void draw() {
-    background(backgroundColor);
-    for (Widget w : widgets) {
-        w.draw();
+class Screen {
+    ArrayList<Button> buttons;
+    HashMap<String, Button> buttonMap;
+    ArrayList<DropDown> ddMenus;
+    ArrayList<StaticRect> staticRects;
+    Table table;
+    ScatterPlot scatterPlot;
+    BarChart barChart;
+    HorizontalScrollBar hscroll;
+    VerticalScrollBar vscroll;
+    BarGraph barGraph;
+
+    boolean hasVerticalScroll;
+    boolean hasHorizontalScroll;
+    //boolean hasBarChart;
+    boolean hasScatterPlot;
+    boolean hasTable;
+    boolean hasBarGraph;
+
+    int minXOffset;
+    int maxXOffset;
+    int minYOffset;
+    int maxYOffset;
+    int curXOffset;
+    int curYOffset;
+    
+    Screen() {
+        ddMenus = new ArrayList<DropDown>();
+        buttons = new ArrayList<Button>();
+        staticRects = new ArrayList<StaticRect>();
+        buttonMap = new HashMap<String, Button>();
+
+        this.hasVerticalScroll = false;
+        this.hasHorizontalScroll = false;
+        //this.hasBarChart = false;
+        this.hasScatterPlot = false;
+        this.hasTable = false;
+        this.hasBarGraph = false;
     }
-    for (radioButton b : radioButtons) {
-        b.draw();
-    }
-    for (Slider s : sliders) {
-      s.draw();
-    }
-  }
-  void addWidget(Widget w) {
-    widgets.add(w);
-  }
-  void addRadioButton(radioButton b) {
-    radioButtons.add(b);
-  }
-  void addSlider(Slider s) {
-    sliders.add(s);
-  }
-  
-  int getEvent(int mX, int mY) {
-    for (Widget w : widgets) {
-      if (w.overWidget(mX,mY)) {
-        return w.event;
-      }
-    }
-    for (radioButton b : radioButtons) {
-      if (b.overWidget(mX,mY)) {
-        for (radioButton b2 : radioButtons) {
-          b2.selected=false;
-   
+    
+    void draw() {
+
+        if (hasTable) {
+            table.draw(titleData,flights,whichValues);
         }
-        b.selected = true;
-      }
+        for (StaticRect sr : staticRects) {
+            sr.draw();
+        }
+        for (Button b : buttons) {
+            b.draw();
+        }
+        for (DropDown dd : ddMenus) {
+            dd.draw();
+        }
+        if (hasScatterPlot) {
+            scatterPlot.draw(scatterPlotXData,scatterPlotYData,minXsp,maxXsp,minYsp,maxYsp,spTitle, spXlabel, spYlabel);
+        }
+        if (hasBarGraph) {
+            barGraph.draw();
+        }
+        if (hasVerticalScroll) {
+            vscroll.draw();
+        }
+        if (hasHorizontalScroll) {
+            hscroll.draw();
+        }
     }
-    return 0;
-  }
-}*/
+
+    void addButton(Button b) {
+        buttons.add(b);
+        buttonMap.put(b.idLabel, b);
+    }
+    void addDropDownMenu(DropDown dd) {
+        ddMenus.add(dd);
+    }
+    void addStaticRect(StaticRect sr) {
+        staticRects.add(sr);
+    }
+
+    // give idlabel and text label of button or item pressed
+    String[] getButtonPressed() {
+        String[] returnString = {"None","None"};
+        for (DropDown dd : ddMenus) {
+            
+            String[] checkString = handleDropDownArray(dd);
+            if (!checkString[0].equals("None") && !checkString[0].equals("Opened")) {
+                //return returnString;
+                returnString[0] = checkString[0];
+                returnString[1] = checkString[1];
+            }
+        }
+        for (Button b : buttons) {
+            if (b.cursorOverWidget()) {
+                String[] reString = {b.idLabel, b.textLabel};
+                return reString;
+            }
+        }
+        return returnString;
+    }
+    void handleDropDownMenuPress() {
+        for (DropDown dd : ddMenus) {
+            handleDropDownArray(dd);
+        }
+    }
+}

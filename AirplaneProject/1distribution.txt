@@ -1,0 +1,14 @@
+
+Week 2 code added:
+
+Jasper (Xubo):
+BarGraph folder
+ToggleButton folder
+
+Jimmy (Zhihan):
+SortData folder
+
+Shane:
+DataExtraction, HandleScreenClick, LoadScreens, scatterplot, screen, staticrect, textbox, interiordropdown
+Mingqi:
+set range for data class 

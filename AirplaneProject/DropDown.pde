@@ -2,6 +2,7 @@ class DropDown extends Widget
 {
     boolean openW;
     ArrayList<Button> selectionButtons;
+    ArrayList<InteriorDropDown> sIDD;
     String textLabel;
     color buttonColor;
     color textLabelColor;
@@ -13,12 +14,18 @@ class DropDown extends Widget
     float gapY;
     float gapX;
     float buttonAmount;
+    boolean changingButtonColor;
+    boolean[] colorController;
     DropDown(float x, float y, float w, float h, String idLabel, String textLabel, color buttonColor, color textLabelColor, PFont buttonFont, float gapY, float gapX, color backgroundColor, color topButtonColor, color secondaryButtonColor)
     {
         super(x,y,w,h,idLabel);
+
+        //assume colors don't change by default
+        changingButtonColor = false;
         openW = false;
         buttonAmount = 0;
         selectionButtons = new ArrayList<Button>();
+        sIDD = new ArrayList<InteriorDropDown>();
         this.gapY = gapY;
         this.textLabel = textLabel;
         this.buttonColor = buttonColor;
@@ -38,6 +45,17 @@ class DropDown extends Widget
         selectionButtons.add(b);
         buttonAmount++;
     }
+    void addInterioDropDown(String buttonLabel, String buttonText) {
+        InteriorDropDown i = new InteriorDropDown(x, bottomY, w, h, buttonLabel, buttonText, buttonColor, textLabelColor, buttonFont, gapY, gapX, backgroundColor, topButtonColor, secondaryButtonColor);
+        bottomY += h + gapY;
+        sIDD.add(i);
+        buttonAmount++;
+    }
+    void addInterioDropDown(InteriorDropDown idd) {
+        bottomY += h + gapY;
+        sIDD.add(idd);
+        buttonAmount++;
+    }
 
     // for drawing buttons with boolean array determining whether buttons use primary or secondary color
     void draw(boolean[] whichValues) {
@@ -47,8 +65,11 @@ class DropDown extends Widget
             fill(backgroundColor);
             rect(x-gapX,y-gapY,w+2*gapX,(buttonAmount +1 ) * (h + gapY) +gapY );
             int i = 0;
-            for (Button b : selectionButtons) {
-                b.draw(whichValues[i]);
+            for (InteriorDropDown idd : sIDD) {
+                idd.draw();
+            }
+            for (Widget b : selectionButtons) {
+                ((Button) b).draw(whichValues[i]);
                 i++;
             }
         }
@@ -65,7 +86,6 @@ class DropDown extends Widget
 
     }
 
-    // for drawing with primary color only
     void draw() {
         // draw buttons if open
         if (openW == true) {
@@ -73,9 +93,24 @@ class DropDown extends Widget
             fill(backgroundColor);
             rect(x-gapX,y-gapY,w+2*gapX,(buttonAmount +1 ) * (h + gapY) +gapY );
 
-            for (Button b : selectionButtons) {
-                b.draw();
+            for (InteriorDropDown idd : sIDD) {
+                idd.draw();
             }
+
+            if (changingButtonColor) {
+                int i = 0;
+                for (Button b : selectionButtons) {
+                    b.draw(colorController[i]);
+                    i++;
+                }
+            }
+            else {
+                for (Button b : selectionButtons) {
+                    b.draw();
+                }
+            }
+
+
         }
         // draw button
         fill(topButtonColor);
@@ -92,11 +127,21 @@ class DropDown extends Widget
     String whichButtonOver() {
         for (Button b : selectionButtons) {
             if (b.cursorOverWidget()) {
-                println(b.idLabel);
                 return b.idLabel;
             }
         }
+        for (InteriorDropDown idd : sIDD) {
+            if (idd.cursorOverWidget()) {
+                return idd.idLabel;
+            }
+        }
         return "None";
+    }
+    boolean overBackGround() {
+        return (mouseX > x - gapX &&
+        mouseX < x + gapX + w &&
+        mouseY > y-gapY &&
+        mouseY > bottomY);
     }
 
 }

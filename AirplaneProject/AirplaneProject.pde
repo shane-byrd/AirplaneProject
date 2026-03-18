@@ -3,11 +3,11 @@ import java.util.Queue;
 import java.util.*;
 import java.io.*;
 
-//screen size
+// screen size
 final int SCREENX=1200;
 final int SCREENY=800;
 
-//track where the local screen is relative to global screen coordinates
+// track where the local screen is relative to global screen coordinates
 int XOFFSET=0;
 int YOFFSET=0;
 
@@ -17,17 +17,45 @@ int MAXXOFFSET = 80 * 20;
 int MINYOFFSET = 0;
 int MAXYOFFSET = 50 * 2000;
 
-Table table;
-VerticalScrollBar vscroll;
-HorizontalScrollBar hscroll;
-DropDown dropDownMenu;
-DropDown showMenu;
+// Define screens
+Screen homeScreen;
+Screen tableScreen;
+Screen graphCreateScreen;
+Screen graphShowScreen;
+Screen barGraphShowScreen;
 
+Screen currentScreen;
+
+
+//Define screen booleans
+boolean OnHomeScreen = false;
+boolean OnTableScreen = true;
+boolean OnGraphCreateScreen = false;
+boolean OnGraphShowScreen = false;
+boolean OnBarGraphShowScreen = false;
+
+//constant UI
+DropDown visualiseSelect;
+StaticRect navBar;
+    
+// scatterPlot global variables
+ArrayList<Float> scatterPlotXData;
+ArrayList<Float> scatterPlotYData;
+String spXlabel;
+String spYlabel;
+String spTitle;
+float minXsp;
+float maxXsp;
+float minYsp;
+float maxYsp;
+boolean GRAPH_ACTIVE = false;
+
+// fonts
 PFont smallFont;
 PFont mediumFont;
 PFont largeFont;
 
-
+// title of each column for table data
 String[] titleData = 
     {
         "Date", "Airline", "Flight Number",
@@ -36,6 +64,9 @@ String[] titleData =
         "STD", "ATD", "STA", "ATA", "Cancelled", "Diverted", "Distance"
     };
 Integer[] indexValues = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17};
+
+// for determining which day of year
+float[] daysInMonth = {0,31,28,31,30,31,30,31,31,30,31,30,31};
 
 // array determines which data points are visible for table
 boolean[] whichValues = {true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true};
@@ -61,160 +92,143 @@ void settings()
 
 void setup() 
 {
-
+    // load fonts
     smallFont = loadFont("Baghdad-14.vlw");
     mediumFont = loadFont("Baghdad-24.vlw");
     largeFont = loadFont("Baghdad-30.vlw");
+
     // load flights from file
-    flights = readFromFile("flights2k2.csv");
-    // define buttons
-    showMenu = new DropDown(
-        5,5,100,30,"show","Show", 
-    color(#5a90d6), // Button Color
-    color(#000000), // text Color
-    smallFont,
-    3,6,            // xgap, ygap
-    color(#a8ceff), // background color
-    color(#125ab8), // top button
-    color(#c25151)  // secondary button
-    );
-    showMenu.addButton("showdate", "Date");
-    showMenu.addButton("showairline", "Airline");
-    showMenu.addButton("showFlightNumber", "Flight Number");
+    flights = readFromFile("flights10k.csv");
 
-    showMenu.addButton("showOA", "Dep. Airport");
-    showMenu.addButton("showOC", "Dep. City");
-    showMenu.addButton("showOS", "Dep. State");
-    showMenu.addButton("showOW", "Dep. WAC");
+    // select visualisation button is always visible
+    visualiseSelect = new DropDown(10,11.5,150,30,"whichV","Pick Visualisation", 
+        color(#5a90d6), // Button Color
+        color(#000000), // text Color
+        smallFont,        // Font Type
+        3,6,              // xgap, ygap
+        color(#a8ceff), // background color
+        color(#125ab8), // top button
+        color(#c25151)  // secondary button
+        );
+    visualiseSelect.addButton("vtable","Table");
+    visualiseSelect.addButton("vgraph","Graph");
 
-    showMenu.addButton("showDA", "Dest. Airport");
-    showMenu.addButton("showDC", "Dest. City");
-    showMenu.addButton("showDS", "Dest. State");
-    showMenu.addButton("showDW", "Dest. WAC");
+    //nav bar is alwats visible
+    navBar = new StaticRect(0,0,SCREENX, 53, "topBar", color(#fffaed), false);
+
+    //initialise and load screens
+    homeScreen = new Screen();
+    loadHomeScreen();
+    tableScreen = new Screen();
+    loadTableScreen();
+    graphCreateScreen = new Screen();
+    loadGraphCreateScreen();
+    graphShowScreen = new Screen();
+    loadGraphShowScreen();
+    barGraphShowScreen = new Screen();
+    loadBarGraphShowScreen();
+
+    currentScreen = tableScreen;
+
     
-    showMenu.addButton("showSDT", "STD");
-    showMenu.addButton("showADT", "ATD");
-    showMenu.addButton("showSAT", "STA");
-    showMenu.addButton("showAAT", "ATA");
 
-    showMenu.addButton("showCancelled", "Cancelled");
-    showMenu.addButton("showDiverted", "Diverted");
-    showMenu.addButton("showDistance", "Distance");
+    // initialise scatterplot data
+    scatterPlotXData = new ArrayList<Float>();
+    scatterPlotYData = new ArrayList<Float>();
+    
 
-    dropDownMenu = new DropDown(100,5,100,40,"Sort","Sort",
-    color(#5a90d6), // Button Color
-    color(#000000), // text Color
-    smallFont,
-    3,6,            // xgap, ygap
-    color(#a8ceff), // background color
-    color(#125ab8), // top button
-    color(#c25151)  // secondary button
-    );
 
-    dropDownMenu.addButton("AirlineSort", "Airline");
-    dropDownMenu.addButton("TimeArrivalSort", "Arrival Time");
-    dropDownMenu.addButton("TimeDestSort", "Destination Time");
-
-    table = new Table(0,50,flights.size(),18,100,30,2,2,
-    color(#D4FCE4),  // background color
-    color(#9AD6B1),  // cell color
-    color(#2B9453),  // title color
-    smallFont);
-    vscroll = new VerticalScrollBar(0, 0, 20, 80, "vscroll", color(#c25151), color(#f5b8b8), 3, 3);
-    hscroll = new HorizontalScrollBar(0, 0, 80, 20, "hscroll", color(#c25151), color(#f5b8b8), 3, 3);
 }
 
 void draw() 
 {
-    background(220);
-    //screen.draw();
-    table.draw(titleData, flights, whichValues);
-    fill(#fffaed);
-    rect(0,0,SCREENX,53);
-    //dropDownMenu.draw();
-    showMenu.draw(whichValues);
-    hscroll.draw();
-    vscroll.draw();
-
+    background(200);
+    currentScreen.draw();
+    visualiseSelect.draw();
 }
 
-// processing-java --sketch=/Users/shanebyrd/Programming/AirplaneProject --run
+
 void keyPressed() {
     boolean offsetChange = false;
-  if(keyCode==LEFT) {
-    XOFFSET-=5;
-    offsetChange = true;
-  }
-  if (keyCode == RIGHT) {
-    XOFFSET+=5;
-    offsetChange = true;
-  }
-  if (keyCode == UP) {
-    YOFFSET-=3;
-    offsetChange = true;
-  }
-  if (keyCode == DOWN) {
-    YOFFSET+=3;
-    offsetChange = true;
-  }
-  
-  if (offsetChange) {
-    clampScroll();
-  }
+    if (currentScreen.hasVerticalScroll) {
+        if (keyCode == UP) {
+            YOFFSET-=3;
+            offsetChange = true;
+        }
+        if (keyCode == DOWN) {
+            YOFFSET+=3;
+            offsetChange = true;
+        }
+    }
+    if (currentScreen.hasHorizontalScroll) {
+        if(keyCode==LEFT) {
+            XOFFSET-=5;
+            offsetChange = true;
+        }
+        if (keyCode == RIGHT) {
+            XOFFSET+=5;
+            offsetChange = true;
+        }
+    }
+    if (offsetChange) {
+        clampScroll();
+    }
   
 
 }
 
 void mousePressed() {
-    if (vscroll.cursorOverWidget()) {
-        vscroll.click = true;
+    if (OnHomeScreen) {
+        homeScreenPress();
     }
-    if (hscroll.cursorOverWidget()) {
-        hscroll.click = true;
+    if (OnTableScreen) {
+        tableScreenPress();
     }
-    if (dropDownMenu.openW && dropDownMenu.whichButtonOver() == "None") {
-        dropDownMenu.openW = false;
+    if (OnGraphCreateScreen) {
+        graphCreateScreenPress();
     }
-    if (dropDownMenu.openW == false && dropDownMenu.cursorOverWidget() == true) {
-        dropDownMenu.openW = true;
+    if (OnGraphShowScreen) {
+        graphShowScreenPress();
     }
-    if (showMenu.openW) {
-        if (showMenu.whichButtonOver()== "None") {
-            showMenu.openW = false;
-        }
-        else {
-            // change selection array for table based on which button in the show menu was pressed
-            String buttonPressed = showMenu.whichButtonOver();
-            whichValues[(int) showLabelToIndex.get(buttonPressed)]  = !whichValues[(int) showLabelToIndex.get(buttonPressed)];
-        }
-    }
-    if (showMenu.openW == false && showMenu.cursorOverWidget() == true) {
-        showMenu.openW = true;
+    if (OnBarGraphShowScreen) {
+        graphShowScreenPress();
     }
 }
 void mouseReleased() {
-    vscroll.click = false;   
-    hscroll.click = false; 
+    if (currentScreen.hasHorizontalScroll) {
+        currentScreen.hscroll.click = false; 
+    }
+    if (currentScreen.hasVerticalScroll) {
+        currentScreen.vscroll.click = false;   
+    }
 }
 void mouseWheel(MouseEvent event) {
     float e = event.getCount();
-    if (keyPressed && keyCode == SHIFT) {
-        XOFFSET += 2*e;
+    if (currentScreen.hasHorizontalScroll) {
+        if (keyPressed && keyCode == SHIFT) {
+            XOFFSET += 2*e;
+        }
     }
-    else {
-        YOFFSET+= 2*e;
+    if (currentScreen.hasVerticalScroll) {
+        if (!keyPressed) {
+            YOFFSET+= 2*e;
+        }
     }
     clampScroll();
 }
 void mouseDragged() {
-  if (vscroll.click ){
-    // calculate new Y offset based off of mouse position
-    YOFFSET = int(MINYOFFSET + ((mouseY-vscroll.h/2 + vscroll.gapY)/(SCREENY - 2*vscroll.gapY - vscroll.h))*(MAXYOFFSET-MINYOFFSET));
-    clampScroll();
-  }
-  if (hscroll.click) {
-    // calculate new X offset based off of mouse position
-    XOFFSET = int(MINXOFFSET + ((mouseX - hscroll.gapX)/(SCREENX - (hscroll.h + 2*hscroll.gapX) - hscroll.gapX - hscroll.w)*(MAXXOFFSET-MINXOFFSET)));
-    clampScroll();
-  }
+    if (currentScreen.hasVerticalScroll) {
+        if (currentScreen.vscroll.click ){
+        // calculate new Y offset based off of mouse position
+            YOFFSET = int(MINYOFFSET + ((mouseY-currentScreen.vscroll.h/2 + currentScreen.vscroll.gapY)/(SCREENY - 2*currentScreen.vscroll.gapY - currentScreen.vscroll.h))*(MAXYOFFSET-MINYOFFSET));
+            clampScroll();
+        }
+    }
+    if (currentScreen.hasHorizontalScroll) {
+        if (currentScreen.hscroll.click) {
+        // calculate new X offset based off of mouse position
+            XOFFSET = int(MINXOFFSET + ((mouseX - currentScreen.hscroll.gapX)/(SCREENX - (currentScreen.hscroll.h + 2*currentScreen.hscroll.gapX) - currentScreen.hscroll.gapX - currentScreen.hscroll.w)*(MAXXOFFSET-MINXOFFSET)));
+            clampScroll();
+        }
+    }
 }

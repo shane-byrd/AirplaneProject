@@ -6,7 +6,10 @@ ArrayList<Flight> readFromFile(String filename)
     {
         String[] dataPoints = split(lines[i], ",");
         Flight f = new Flight(dataPoints);
-        flights.add(f);
+        if (f.missingData == false) {
+            flights.add(f);
+        }
+        
     }
     return flights;
 }

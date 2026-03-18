@@ -2,7 +2,6 @@ class Table {
     float x,y,rows,cols,cellW,cellH,gapX,gapY;
     color backgroundColor, cellColor, titleColor;
     PFont tableFont;
-
     float w,h;
     Table(float x, float y, float rows, float cols, float cellW, float cellH, float gapX, float gapY, color backgroundColor, color cellColor, color titleColor, PFont tableFont) {
         this.x = x;
@@ -20,7 +19,6 @@ class Table {
         w = (this.cellW * this.cols) + (this.cols + 1) * this.gapX;
         h = (this.cellH * this.rows) + (this.rows + 1) * this.gapY;
     }
-
     void draw(String[] titleData, ArrayList<Flight> flights, boolean[] whichValues) {
         // which values is an array of booleans saying which data points are to be shown
         noStroke();

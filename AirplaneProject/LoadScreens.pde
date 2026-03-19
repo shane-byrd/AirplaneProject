@@ -28,6 +28,32 @@ String[][] chooseGraphBarChartData = {
 
 void loadHomeScreen() {
     homeScreen.staticRects.add(navBar);
+
+    RangeSlider rs = new RangeSlider(200,SCREENY/2, 600,50,"rs",
+    5,5,
+    12,12,
+    color(#64da78),
+    color(#db4e47),
+    color(#2c77c1),
+    color(0),
+    smallFont
+    );
+
+    homeScreen.hasRangeSlider = true;
+    homeScreen.rangeSlider = rs;
+    /*
+    RangeSlider(
+        float x, float y, float w, float h,
+        String idLabel,
+        float gapX, float gapY,
+        float handleW, float handleH,
+        color trackColor,
+        color selectedTrackColor,
+        color handleColor,
+        color textColor,
+        PFont sliderFont
+    )
+    */
 }
 void loadTableScreen() {
     tableScreen.staticRects.add(navBar);

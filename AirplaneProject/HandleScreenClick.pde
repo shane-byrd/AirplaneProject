@@ -1,4 +1,5 @@
 void homeScreenPress() {
+    homeScreen.rangeSlider.press();
     String[] visualiseOption = handleDropDownArray(visualiseSelect);
     if (visualiseOption[0] != "None" && visualiseOption[0] != "Opened") {
         if (visualiseOption[0] == "vtable") {

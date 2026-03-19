@@ -28,8 +28,8 @@ Screen currentScreen;
 
 
 //Define screen booleans
-boolean OnHomeScreen = false;
-boolean OnTableScreen = true;
+boolean OnHomeScreen = true;
+boolean OnTableScreen = false;
 boolean OnGraphCreateScreen = false;
 boolean OnGraphShowScreen = false;
 boolean OnBarGraphShowScreen = false;
@@ -128,7 +128,7 @@ void setup()
     barGraphShowScreen = new Screen();
     loadBarGraphShowScreen();
 
-    currentScreen = tableScreen;
+    currentScreen = homeScreen;
 
     
 
@@ -201,6 +201,9 @@ void mouseReleased() {
     if (currentScreen.hasVerticalScroll) {
         currentScreen.vscroll.click = false;   
     }
+    if (currentScreen.hasRangeSlider) {
+        currentScreen.rangeSlider.release();
+    }
 }
 void mouseWheel(MouseEvent event) {
     float e = event.getCount();
@@ -217,6 +220,9 @@ void mouseWheel(MouseEvent event) {
     clampScroll();
 }
 void mouseDragged() {
+    if (currentScreen.hasRangeSlider) {
+        currentScreen.rangeSlider.drag();
+    }
     if (currentScreen.hasVerticalScroll) {
         if (currentScreen.vscroll.click ){
         // calculate new Y offset based off of mouse position

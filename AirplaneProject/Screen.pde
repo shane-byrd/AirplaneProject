@@ -9,6 +9,7 @@ class Screen {
     HorizontalScrollBar hscroll;
     VerticalScrollBar vscroll;
     BarGraph barGraph;
+    RangeSlider rangeSlider;
 
     boolean hasVerticalScroll;
     boolean hasHorizontalScroll;
@@ -16,6 +17,7 @@ class Screen {
     boolean hasScatterPlot;
     boolean hasTable;
     boolean hasBarGraph;
+    boolean hasRangeSlider;
 
     int minXOffset;
     int maxXOffset;
@@ -36,6 +38,7 @@ class Screen {
         this.hasScatterPlot = false;
         this.hasTable = false;
         this.hasBarGraph = false;
+        this.hasRangeSlider = false;
     }
     
     void draw() {
@@ -63,6 +66,9 @@ class Screen {
         }
         if (hasHorizontalScroll) {
             hscroll.draw();
+        }
+        if (hasRangeSlider) {
+            rangeSlider.draw();
         }
     }
 

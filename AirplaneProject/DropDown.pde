@@ -16,6 +16,7 @@ class DropDown extends Widget
     float buttonAmount;
     boolean changingButtonColor;
     boolean[] colorController;
+    boolean border;
     DropDown(float x, float y, float w, float h, String idLabel, String textLabel, color buttonColor, color textLabelColor, PFont buttonFont, float gapY, float gapX, color backgroundColor, color topButtonColor, color secondaryButtonColor)
     {
         super(x,y,w,h,idLabel);
@@ -35,7 +36,7 @@ class DropDown extends Widget
         this.backgroundColor = backgroundColor;
         this.gapX = gapX;
         this.secondaryButtonColor = secondaryButtonColor;
-
+        border = false;
         bottomY = y + h + gapY;
     }
     void addButton(String buttonLabel, String buttonText) {
@@ -59,11 +60,18 @@ class DropDown extends Widget
 
     // for drawing buttons with boolean array determining whether buttons use primary or secondary color
     void draw(boolean[] whichValues) {
+        if (border) {
+            stroke(0);
+        }
+        else {
+            noStroke();
+        }
+        if (visible) {
         // draw buttons if open
         if (openW == true) {
             // draw background
             fill(backgroundColor);
-            rect(x-gapX,y-gapY,w+2*gapX,(buttonAmount +1 ) * (h + gapY) +gapY );
+            rect(x-gapX,y-gapY,w+2*gapX,(buttonAmount +1 ) * (h + gapY) +gapY, 6 );
             int i = 0;
             for (InteriorDropDown idd : sIDD) {
                 idd.draw();
@@ -75,23 +83,32 @@ class DropDown extends Widget
         }
         // draw top button
         fill(topButtonColor);
-        rect(x,y,w,h);
+        rect(x,y,w,h,6);
 
         // draw text
         fill(textLabelColor);
         textFont(buttonFont);
         textAlign(CENTER,CENTER);
         text(textLabel, x+ w/2, y + h/2);
+        }
+
 
 
     }
 
     void draw() {
+            if (border) {
+            stroke(0);
+        }
+        else {
+            noStroke();
+        }
+        if (visible) {
         // draw buttons if open
         if (openW == true) {
             // draw background
             fill(backgroundColor);
-            rect(x-gapX,y-gapY,w+2*gapX,(buttonAmount +1 ) * (h + gapY) +gapY );
+            rect(x-gapX,y-gapY,w+2*gapX,(buttonAmount +1 ) * (h + gapY) +gapY ,6);
 
             for (InteriorDropDown idd : sIDD) {
                 idd.draw();
@@ -114,13 +131,15 @@ class DropDown extends Widget
         }
         // draw button
         fill(topButtonColor);
-        rect(x,y,w,h);
+        rect(x,y,w,h,6);
 
         // draw text
         fill(textLabelColor);
         textFont(buttonFont);
         textAlign(CENTER,CENTER);
         text(textLabel, x+ w/2, y + h/2);
+
+        }
 
 
     }
@@ -141,7 +160,7 @@ class DropDown extends Widget
         return (mouseX > x - gapX &&
         mouseX < x + gapX + w &&
         mouseY > y-gapY &&
-        mouseY > bottomY);
+        mouseY < bottomY);
     }
 
 }

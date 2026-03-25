@@ -136,6 +136,22 @@ float bestDivider(float low, float high) {
 
 }
 
+float bestBinWidth(float low, float high, float binAmount) {
+    float div = (high-low) / binAmount;
+    float rounded = (float) Math.pow(10, Math.round(Math.log10(div)));
+    float bestRounded = rounded;
+    for (int i = 1; i < 10; i ++) {
+        float testRounded = rounded * i;
+        float divisions = (high-low) / testRounded;
+
+        if (Math.abs(10 - divisions) < Math.abs(10 - ((high-low) / bestRounded)) ){
+            bestRounded = testRounded;
+        }
+    }
+    return bestRounded;
+
+}
+
 
 
 void closeAll(InteriorDropDown idd) {
@@ -222,4 +238,14 @@ String[] handleInteriorDropDownArray(InteriorDropDown idd) {
         }
     }
     return returnLabel;
+}
+
+boolean isInteger(String str) {
+    if (str == null || str.isEmpty()) return false;
+    try {
+        Integer.parseInt(str);
+        return true;
+    } catch (NumberFormatException e) {
+        return false;
+    }
 }

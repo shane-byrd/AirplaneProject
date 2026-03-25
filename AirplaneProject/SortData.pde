@@ -1,6 +1,6 @@
 // Tommy (Zhihan)
 void sortFlights(String sortType) {
-  Collections.sort(flights, new Comparator<Flight>() {
+  Collections.sort(filteredFlights, new Comparator<Flight>() {
     public int compare(Flight a, Flight b) {
 
       if (sortType.equals("airlineAsc")) {

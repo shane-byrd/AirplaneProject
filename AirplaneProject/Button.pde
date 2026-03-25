@@ -17,16 +17,19 @@ class Button extends Widget
 
     // for drawing only with primary color
     void draw() {
+        if (visible) {
+            // draw button
+            fill(buttonColor);
+            rect(x,y,w,h,6);
 
-        // draw button
-        fill(buttonColor);
-        rect(x,y,w,h);
+            // draw text
+            fill(textLabelColor);
+            textFont(buttonFont);
+            textAlign(CENTER,CENTER);
+            text(textLabel, x+ w/2, y + h/2);
+        }
 
-        // draw text
-        fill(textLabelColor);
-        textFont(buttonFont);
-        textAlign(CENTER,CENTER);
-        text(textLabel, x+ w/2, y + h/2);
+
     }
 
     // for drawing with secondary color option
@@ -40,7 +43,7 @@ class Button extends Widget
             fill(secondaryButtonColor);
         }
         
-        rect(x,y,w,h);
+        rect(x,y,w,h,2);
 
         // draw text
         fill(textLabelColor);

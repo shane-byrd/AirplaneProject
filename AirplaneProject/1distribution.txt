@@ -2,13 +2,20 @@
 Week 2 code added:
 
 Jasper (Xubo):
-BarGraph folder
-ToggleButton folder
+searchBox
 
 Jimmy (Zhihan):
-SortData folder
+Pagination
+edits to table class 
 
 Shane:
-DataExtraction, HandleScreenClick, LoadScreens, scatterplot, screen, staticrect, textbox, interiordropdown
+BarChart,DataConvert,ErrorMessage,FilterData,Histogram
+edits made to 
+loadScreens
+loadgraphdata
+textbox
+textedit
+
+
 Mingqi:
-set range for data class 
+FilterFlights

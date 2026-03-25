@@ -29,11 +29,12 @@ class ScatterPlot extends Graph
         //draw yLabel
         fill(150);
         textFont(dataFont);
-        textAlign(CENTER, TOP);
-        text(yLabel, x - (w* backspace/2), y - 12);
+        textAlign(LEFT, TOP);
+        text(yLabel, x - (w* backspace)+3, y - 20);
 
         //draw xLabel
-        text(xLabel, x + w + (w* backspace/2), y + h+12);
+        textAlign(RIGHT, TOP);
+        text(xLabel, x + w + (w* backspace)-10, y + h+30);
 
         ellipseMode(CENTER);
         if (xData.size() == yData.size()) {
@@ -54,13 +55,13 @@ class ScatterPlot extends Graph
             textAlign(LEFT,TOP);
 
             // draw x axis labels
-            text(xLow, x, y + h);
-            text(xHigh, x+w, y+h);
+            text(String.format("%.0f",xLow), x, y + h+20);
+            text(String.format("%.0f",xHigh), x+w, y+h);
 
             //draw y axis labels
             textAlign(RIGHT, TOP);
-            text(yLow,x,y+h);
-            text(yHigh,x,y);
+            text(String.format("%.0f",yLow),x,y+h);
+            text(String.format("%.0f",yHigh),x,y);
 
             float xDiv = bestDivider(xLow, xHigh);
             //draw gridlines
@@ -82,7 +83,7 @@ class ScatterPlot extends Graph
                     stroke(0);
                     line(xLoc, y+h, xLoc, y+h+10);
 
-                    text(xVal, xLoc,y+h+13);
+                    text(String.format("%.0f",xVal), xLoc,y+h+13);
                 }
                 
                 j++;
@@ -106,7 +107,7 @@ class ScatterPlot extends Graph
                     line(x, yLoc, x-10, yLoc);
 
                     //draw label value
-                    text(yVal, x, yLoc);
+                    text(String.format("%.0f",yVal), x, yLoc);
                 }
 
 

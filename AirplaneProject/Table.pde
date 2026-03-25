@@ -6,7 +6,7 @@ class Table {
     Table(float x, float y, float rows, float cols, float cellW, float cellH, float gapX, float gapY, color backgroundColor, color cellColor, color titleColor, PFont tableFont) {
         this.x = x;
         this.y = y;
-        this.rows = rows;
+        this.rows = rows+1;
         this.cols = cols;
         this.cellW = cellW;
         this.cellH = cellH;
@@ -18,6 +18,11 @@ class Table {
         this.tableFont = tableFont;
         w = (this.cellW * this.cols) + (this.cols + 1) * this.gapX;
         h = (this.cellH * this.rows) + (this.rows + 1) * this.gapY;
+    }
+    void updateDataSize(ArrayList<Flight> filteredFlights) {
+        rows = filteredFlights.size()+1;
+        //w = (cellH * rows) + (rows + 1) * gapY;
+        h = (cellH * rows) + (rows + 1) * gapY;
     }
     void draw(String[] titleData, ArrayList<Flight> flights, boolean[] whichValues) {
         // which values is an array of booleans saying which data points are to be shown
@@ -34,13 +39,24 @@ class Table {
             }
         } 
         //draw background table
+        //float nw = (cellW * visibleCount) + (visibleCount + 1) * gapX;
+
+
+//
+        int startIndex = currentPage * tableAmount;
+        int endIndex = min(startIndex + tableAmount, flights.size());
+        int pageRows = endIndex - startIndex;
+
+        float drawRows = pageRows + 1;
         float nw = (cellW * visibleCount) + (visibleCount + 1) * gapX;
+        float nh = (cellH * drawRows) + (drawRows + 1) * gapY;
+//
         fill(backgroundColor);
         rect(x-XOFFSET,y-YOFFSET,nw,h);
-
         // draw individual cells
-        for (int r = 0; r < int(rows); r++) {
+        for (int r = 0; r < int(drawRows); r++) {
             for (int c = 0; c < int(cols); c++) {
+                
                 if (whichValues[c] == true) {
                     // calculate location of cell
                     float cellX = x + gapX + ((cellW + gapX) * (c - falseArray[c]));
@@ -54,11 +70,15 @@ class Table {
                         fill(#000000);
                         textFont(tableFont);
                         textAlign(CENTER,CENTER);
+                        /*
                         String outputText;
                         outputText = flights.get(r-1).valuesInStringFormat[c];
-
-
-                        text(outputText, cellX + cellW/2 - XOFFSET, cellY + cellH/2 - YOFFSET);
+                        */
+                        int flightIndex = startIndex + (r-1);
+                        if (flightIndex < flights.size()) {
+                            String outputText = flights.get(flightIndex).valuesInStringFormat[c];
+                            text(outputText, cellX + cellW/2 - XOFFSET, cellY + cellH/2 - YOFFSET);
+                        }
                     }
                     // put title in different color
                     if (r == 0) {

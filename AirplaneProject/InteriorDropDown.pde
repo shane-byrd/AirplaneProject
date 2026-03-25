@@ -25,11 +25,17 @@ class InteriorDropDown extends DropDown
 
     // for drawing with primary color only
     void draw() {
+        if (border) {
+            stroke(0);
+        }
+        else {
+            noStroke();
+        }
         // draw buttons if open
         if (openW == true) {
             // draw background
             fill(backgroundColor);
-            rect(x+w+gapX,y-gapY,w+2*gapX,(buttonAmount ) * (h + gapY) +gapY );
+            rect(x+w+gapX,y-gapY,w+2*gapX,(buttonAmount ) * (h + gapY) +gapY ,6);
 
             for (Button b : selectionButtons) {
                 b.draw();
@@ -40,7 +46,7 @@ class InteriorDropDown extends DropDown
         }
         // draw button
         fill(buttonColor);
-        rect(x,y,w,h);
+        rect(x,y,w,h,6);
 
         // draw text
         fill(textLabelColor);

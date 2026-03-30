@@ -13,11 +13,11 @@ ArrayList<Float> getDepartureDelay(ArrayList<Flight> flights) {
         int depTime  = hhmmToMinConvert(f.depTime);
         int scheduledDepTime  = hhmmToMinConvert(f.scheduledDepTime);
         int delayTime;
-        if (abs((depTime - scheduledDepTime)) < abs((depTime + 26*60) - scheduledDepTime) ) {
+        if (abs((depTime - scheduledDepTime)) < abs((depTime + 24*60) - scheduledDepTime) ) {
             delayTime = depTime - scheduledDepTime;
         }
         else {
-            delayTime = (depTime + 26*60) - scheduledDepTime;
+            delayTime = (depTime + 24*60) - scheduledDepTime;
         }
         r.add((float)delayTime);
     }
@@ -29,13 +29,18 @@ ArrayList<Float> getArrivalDelay(ArrayList<Flight> flights) {
     for (Flight f : flights) {
         int arrTime  = hhmmToMinConvert(f.arrTime);
         int scheduledArrTime  = hhmmToMinConvert(f.scheduledArrTime);
-        int delayTime;
-        if (abs((arrTime - scheduledArrTime)) < abs((arrTime + 26*60) - scheduledArrTime) ) {
+        int delayTime = arrTime - scheduledArrTime;
+        if (delayTime < -720) {
+            delayTime += 1440;
+        }
+        /*
+        if (abs((arrTime - scheduledArrTime)) < abs((arrTime + 24*60) - scheduledArrTime) ) {
             delayTime = arrTime - scheduledArrTime;
         }
         else {
-            delayTime = (arrTime + 26*60) - scheduledArrTime;
+            delayTime = (arrTime + 24*60) - scheduledArrTime;
         }
+        */
         r.add((float)delayTime);
     }
     return r;
@@ -124,7 +129,7 @@ Map<String, Float> getHashData(String category, String data, ArrayList<Flight> f
     for (Flight f : flights) {
         String vs = getStringData(f,category);
         freqMap.put(vs, freqMap.getOrDefault(vs, 0.0f) + 1.0f);
-        returnMap.put(vs, getFloatData(f,data,returnMap.getOrDefault(vs,0.0f),freqMap.get(vs)));
+        returnMap.put(vs, getFloatData(f,data,returnMap.getOrDefault(vs,1.0f),freqMap.get(vs)));
     }
     return returnMap;
 }
@@ -152,7 +157,8 @@ String getStringData(Flight f, String category) {
     if (category.equals("State (Departure)")) {
         return f.originState;
     }
-    return " ";
+
+    return null;
 }
 
 Float getFloatData(Flight f, String data, Float currentVal, Float freqVal) {
@@ -174,6 +180,7 @@ Float getFloatData(Flight f, String data, Float currentVal, Float freqVal) {
         else curval = 0.0;
         Float newMean = ( (currentVal * freqVal) + curval ) / (freqVal + 1);
         return newMean;
+        
     }
     if (data.equals("% Cancelled")) {
         Float curval;
@@ -193,11 +200,11 @@ Float getSingleDepartureDelay(Flight f) {
     int depTime  = hhmmToMinConvert(f.depTime);
     int scheduledDepTime  = hhmmToMinConvert(f.scheduledDepTime);
     int delayTime;
-    if (abs((depTime - scheduledDepTime)) < abs((depTime + 26*60) - scheduledDepTime) ) {
+    if (abs((depTime - scheduledDepTime)) < abs((depTime + 24*60) - scheduledDepTime) ) {
         delayTime = depTime - scheduledDepTime;
     }
     else {
-        delayTime = (depTime + 26*60) - scheduledDepTime;
+        delayTime = (depTime + 24*60) - scheduledDepTime;
     }
     return (float)delayTime;
 }
@@ -206,11 +213,11 @@ Float getSingleArrivalDelay(Flight f) {
     int arrTime  = hhmmToMinConvert(f.arrTime);
     int scheduledArrTime  = hhmmToMinConvert(f.scheduledArrTime);
     int delayTime;
-    if (abs((arrTime - scheduledArrTime)) < abs((arrTime + 26*60) - scheduledArrTime) ) {
+    if (abs((arrTime - scheduledArrTime)) < abs((arrTime + 24*60) - scheduledArrTime) ) {
         delayTime = arrTime - scheduledArrTime;
     }
     else {
-        delayTime = (arrTime + 26*60) - scheduledArrTime;
+        delayTime = (arrTime + 24*60) - scheduledArrTime;
     }
     return (float) delayTime;
 }
@@ -246,6 +253,9 @@ float[] getMinMaxShowData() {
     if (ascendingBC) {
         returnFL[0] = showBCdata.get(0).getValue();
         returnFL[1] = showBCdata.get(showBCdata.size() - 1).getValue();
+        if (returnFL[0]==returnFL[1] && returnFL[0]> 0.0) {
+            returnFL[0]=0.0;
+        }
     }
     else {
         returnFL[0] = showBCdata.get(showBCdata.size() - 1).getValue();

@@ -171,6 +171,7 @@ boolean filterDataNumerical(String category, String type, String valueOne, Strin
     }
     if (category.equals("Distance")) {
         exactIntOne = safeInt(valueOne);
+        exactIntTwo = safeInt(valueTwo);
     }
     else if (category.equals("Date")) {
         exactIntOne = convertDDMMYYYYtoint(valueOne);
@@ -195,7 +196,8 @@ boolean filterDataNumerical(String category, String type, String valueOne, Strin
     else {
         return false;
     }
-    BetweenRange(category,exactIntTwo,exactIntOne);
+    //BetweenRange(category,exactIntTwo,exactIntOne);
+    BetweenRange(category,exactIntOne,exactIntTwo);
     filtersApplied = true;
     updateFilterLabel();
     tableScreen.table.updateDataSize(filteredFlights);

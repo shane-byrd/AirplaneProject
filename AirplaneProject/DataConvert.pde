@@ -65,6 +65,30 @@ String mintoHHMMConvert(int timeInt) {
     return (hour+":"+copyMinute);
     
 }
+String minToHoursandMin(int timeInt) {
+    int copyMinute = abs(timeInt);
+    int hour=0;
+    while (copyMinute>= 60) {
+        copyMinute -=60;
+        hour++;
+    }
+    String returnString = "";
+    if (timeInt < 0) {
+        returnString =  "-"+hour+":"+copyMinute;
+    }
+    else {
+        returnString = hour+":"+copyMinute;
+    }
+    if (copyMinute == 0) {
+        returnString+= "0";
+    }
+    else if (copyMinute < 10) {
+        returnString = returnString.substring(0,returnString.length()-1) + "0" + returnString.substring(returnString.length()-1,returnString.length());
+    }
+    return returnString;
+    
+
+}
 
 int convertHHMMtoMin(String hhmmString) {
     // check if correct
@@ -85,11 +109,11 @@ int getDepartureDelay(Flight f) {
     int depTime  = hhmmToMinConvert(f.depTime);
     int scheduledDepTime  = hhmmToMinConvert(f.scheduledDepTime);
     int delayTime;
-    if (abs((depTime - scheduledDepTime)) < abs((depTime + 26*60) - scheduledDepTime) ) {
+    if (abs((depTime - scheduledDepTime)) < abs((depTime + 24*60) - scheduledDepTime) ) {
         delayTime = depTime - scheduledDepTime;
     }
     else {
-        delayTime = (depTime + 26*60) - scheduledDepTime;
+        delayTime = (depTime + 24*60) - scheduledDepTime;
     }
     return delayTime;
 }
@@ -97,12 +121,17 @@ int getDepartureDelay(Flight f) {
 int getArrivalDelay(Flight f) {
     int arrTime  = hhmmToMinConvert(f.arrTime);
     int scheduledArrTime  = hhmmToMinConvert(f.scheduledArrTime);
-    int delayTime;
-    if (abs((arrTime - scheduledArrTime)) < abs((arrTime + 26*60) - scheduledArrTime) ) {
+    int delayTime = arrTime - scheduledArrTime;
+    if (delayTime < -720) {
+        delayTime += 1440;
+    }
+    /*
+    if (abs((arrTime - scheduledArrTime)) < abs((arrTime + 24*60) - scheduledArrTime) ) {
         delayTime = arrTime - scheduledArrTime;
     }
     else {
-        delayTime = (arrTime + 26*60) - scheduledArrTime;
+        delayTime = (arrTime + 24*60) - scheduledArrTime;
     }
+    */
     return delayTime;
 }

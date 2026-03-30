@@ -35,34 +35,6 @@ class ScatterPlot extends Graph
         //draw xLabel
         textAlign(RIGHT, TOP);
         text(xLabel, x + w + (w* backspace)-10, y + h+30);
-
-        ellipseMode(CENTER);
-        if (xData.size() == yData.size()) {
-            noStroke();
-            for (int i = 0; i < xData.size(); i++) {
-                fill(dataColor);
-                ellipse(x + w*((xData.get(i) - xLow))/(xHigh-xLow), y + h - h*((yData.get(i) - yLow)/(yHigh-yLow)), pointRadius,pointRadius);
-            }
-            fill(0);
-            stroke(0);
-            // vertical line
-            line(x,y,x,y+h);
-
-            // horizontal line
-            line(x,y+h, x+w,y+h);
-
-            textFont(dataFont);
-            textAlign(LEFT,TOP);
-
-            // draw x axis labels
-            text(String.format("%.0f",xLow), x, y + h+20);
-            text(String.format("%.0f",xHigh), x+w, y+h);
-
-            //draw y axis labels
-            textAlign(RIGHT, TOP);
-            text(String.format("%.0f",yLow),x,y+h);
-            text(String.format("%.0f",yHigh),x,y);
-
             float xDiv = bestDivider(xLow, xHigh);
             //draw gridlines
             int j = 1;
@@ -82,8 +54,8 @@ class ScatterPlot extends Graph
                     // draw graduations
                     stroke(0);
                     line(xLoc, y+h, xLoc, y+h+10);
-
-                    text(String.format("%.0f",xVal), xLoc,y+h+13);
+                    String valueFormat = getCorrectFormat(xVal,scatterTypeX);
+                    text(valueFormat, xLoc,y+h+13);
                 }
                 
                 j++;
@@ -107,12 +79,42 @@ class ScatterPlot extends Graph
                     line(x, yLoc, x-10, yLoc);
 
                     //draw label value
-                    text(String.format("%.0f",yVal), x, yLoc);
+                    String valueFormat = getCorrectFormat(yVal,scatterTypeY);
+                    text(valueFormat, x, yLoc);
                 }
 
 
                 j++;
             }
+        ellipseMode(CENTER);
+        if (xData.size() == yData.size()) {
+            stroke(0);
+            for (int i = 0; i < xData.size(); i++) {
+                fill(dataColor);
+                ellipse(x + w*((xData.get(i) - xLow))/(xHigh-xLow), y + h - h*((yData.get(i) - yLow)/(yHigh-yLow)), pointRadius,pointRadius);
+            }
+            fill(0);
+            stroke(0);
+            // vertical line
+            line(x,y,x,y+h);
+
+            // horizontal line
+            line(x,y+h, x+w,y+h);
+
+            textFont(dataFont);
+            textAlign(LEFT,TOP);
+
+            // draw x axis labels
+            
+            text(getCorrectFormat(xLow,scatterTypeX), x, y + h+20);
+            text(getCorrectFormat(xHigh,scatterTypeX), x+w, y+h);
+
+            //draw y axis labels
+            textAlign(RIGHT, TOP);
+            text(getCorrectFormat(yLow,scatterTypeY),x,y+h);
+            text(getCorrectFormat(yHigh,scatterTypeY),x,y);
+
+
         }
     }
 }

@@ -30,9 +30,15 @@ class Flight {
   String[] valuesInStringFormat = new String[18];
 
   Flight(String[] row) {
+    String[] flightDate = row[0].split("/");
+    flightMonth = safeInt(flightDate[0]);
+    flightDay =  safeInt(flightDate[1]);
+    flightYear =  safeInt(flightDate[2].substring(0,4));
+  /*
     flightMonth = safeInt(row[0].substring(0,2));
     flightDay = safeInt(row[0].substring(3,5));
     flightYear = safeInt(row[0].substring(6,10));
+    */
     missingData = false;
     for (String col : row) {
       if (col.length() == 0) {
@@ -61,7 +67,7 @@ class Flight {
     diverted = safeInt(row[18]) == 1;
 
     distance = safeInt(row[19]);
-
+  
     // to make it easier to present data have an array of strings
     valuesInStringFormat[0] = this.getDateRegular();
     valuesInStringFormat[1] =  airlineCode;

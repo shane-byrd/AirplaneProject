@@ -2,7 +2,9 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.*;
 import java.io.*;
-
+import java.util.stream.Stream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 // screen size
 final int SCREENX=1200;
 final int SCREENY=800;
@@ -13,7 +15,7 @@ int YOFFSET=0;
 
 // prevent scrolling outside of screen
 int MINXOFFSET = 0;
-int MAXXOFFSET = 80 * 20;
+int MAXXOFFSET = 100 * 19 - SCREENX;
 int MINYOFFSET = 0;
 int MAXYOFFSET = 50 * 2000;
 
@@ -26,12 +28,13 @@ Screen barChartShowScreen;
 Screen barGraphShowScreen;
 Screen histogramShowScreen;
 Screen filterDataScreen;
+Screen piChartShowScreen;
 
 Screen currentScreen;
 
 
 //Define screen booleans
-boolean OnHomeScreen = false;
+boolean OnHomeScreen = false;;
 boolean OnTableScreen = true;
 boolean OnGraphCreateScreen = false;
 boolean OnGraphShowScreen = false;
@@ -39,6 +42,7 @@ boolean OnbarChartShowScreen = false;
 boolean OnBarGraphShowScreen = false;
 boolean OnFilterDataScreen = false;
 boolean OnHistogramShowScreen = false;
+boolean OnPiChartShowScreen = false;
 //constant UI
 DropDown visualiseSelect;
 StaticRect navBar;
@@ -64,6 +68,8 @@ float maxXsp;
 float minYsp;
 float maxYsp;
 boolean GRAPH_ACTIVE = false;
+String scatterTypeX;
+String scatterTypeY;
 
 // bar chart global variables
 Map<String, Float> categoryMap = new HashMap<>();
@@ -74,6 +80,11 @@ String titleBC;
 int showNumBC;
 boolean ascendingBC;
 List<Map.Entry<String, Float>> showBCdata;
+
+// pi chart global variables
+List<Map.Entry<String, Float>> piFreqData;
+String titlePC;
+float piTotal;
 
 // histogram gloval variables
 ArrayList<Float> histogramData;
@@ -92,9 +103,9 @@ String hsType;
 // search global variables
 boolean searchOpen = false;
 boolean searchActive = false;
-float searchBoxX = 976;
+float searchBoxX = 955;
 float searchBoxY = 11.5;
-float searchBoxW = 120;
+float searchBoxW = 130;
 float searchBoxH = 30;
 String searchText = "";
 String selectedColumn = "All";
@@ -141,6 +152,11 @@ int tableAmount = 1000;
 int currentPage = 0;
 int totalPages = 1;
 
+/*
+PImage mainImg;
+PImage filterImg;
+PImage graphImg;
+*/
 
 void settings() 
 {
@@ -150,24 +166,25 @@ void settings()
 void setup() 
 {
     // load fonts
-    /*
-    smallFont = loadFont("Baghdad-14.vlw");
-    mediumFont = loadFont("Baghdad-24.vlw");
-    largeFont = loadFont("Baghdad-30.vlw");
-    */
     smallFont = loadFont("ArialUnicodeMS-14.vlw");
     mediumFont = loadFont("ArialUnicodeMS-24.vlw");
     largeFont = loadFont("ArialUnicodeMS-30.vlw");
     // load flights from file
-    flights = readFromFile("flights2k2.csv");
+    flights = readFromFile("flights10k.csv");
     filteredFlights = new ArrayList<Flight>(flights);
+    /*
+    mainImg = loadImage("stripes2.png");
+    filterImg = loadImage("fi.jpeg");
+    graphImg = loadImage("gi.jpeg");
+    */
+
 
     // select visualisation button is always visible
-    visualiseSelect = new DropDown(10,11.5,150,30,"whichV","Pick Visualisation", 
+    visualiseSelect = new DropDown(10,11.5,120,30,"whichV","Pick Visualisation", 
         color(#5a90d6), // Button Color
         color(#000000), // text Color
         smallFont,        // Font Type
-        3,6,              // xgap, ygap
+        7,9,              // xgap, ygap
         color(#a8ceff), // background color
         color(#125ab8), // top button
         color(#c25151)  // secondary button
@@ -183,7 +200,6 @@ void setup()
     );
 
 
-
     // error message
     currentError = new ErrorMessage(300,200, 400,300,"error",
     "This is a sample error message",
@@ -194,6 +210,7 @@ void setup()
     );
     //nav bar is alwats visible
     navBar = new StaticRect(0,0,SCREENX, 53, "topBar", color(#fffaed), false);
+    navBar.strokeOn = true;
 
     //initialise and load screens
     homeScreen = new Screen();
@@ -212,6 +229,8 @@ void setup()
     loadFilterDataScreen();
     histogramShowScreen = new Screen();
     loadHistogramShowScreen();
+    piChartShowScreen = new Screen();
+    loadPiChartShowScreen();
 
     currentScreen = tableScreen;
 
@@ -228,8 +247,19 @@ void setup()
 
 void draw() 
 {
-    background(200);
+    if (OnFilterDataScreen) {
+        background(#f5d7bf);
+    }
+
+    else if (!OnTableScreen) {
+        background(#d3bfe3);
+    }
+    else {
+        background(#defadf);
+
+    }
     currentScreen.draw();
+
     if (OnTableScreen) {
         updatePagination();
         updateVerticalLimit();
@@ -307,6 +337,19 @@ void keyPressed() {
 }
 
 void mousePressed() {
+    currentScreen.updateMousePress();
+    handleDropDownMousePress(visualiseSelect);
+    if (currentScreen.hasHorizontalScroll) {
+        currentScreen.hscroll.click = currentScreen.hscroll.cursorOverWidget(); 
+    }
+    if (currentScreen.hasVerticalScroll) {
+        currentScreen.vscroll.click = currentScreen.vscroll.cursorOverWidget(); 
+    }
+    if (currentScreen.hasRangeSlider) {
+        currentScreen.rangeSlider.release();
+    }
+}
+void mouseReleased() {
     if (errorMessageActive) {
         if (currentError.cursorOverWidget()) {
             errorMessageActive = false;
@@ -314,6 +357,17 @@ void mousePressed() {
 
     }
     else {
+        if (currentScreen.hasHorizontalScroll) {
+            currentScreen.hscroll.click = false; 
+        }
+        if (currentScreen.hasVerticalScroll) {
+            currentScreen.vscroll.click = false;   
+        }
+        if (currentScreen.hasRangeSlider) {
+            currentScreen.rangeSlider.release();
+        }
+        currentScreen.updateMouseReleased();
+        handleDropDownReleased(visualiseSelect);
         if (OnHomeScreen) {
             homeScreenPress();
         }
@@ -327,9 +381,6 @@ void mousePressed() {
         if (OnGraphShowScreen) {
             graphShowScreenPress();
         }
-        if (OnBarGraphShowScreen) {
-            graphShowScreenPress();
-        }
         if (OnbarChartShowScreen) {
             barChartShowScreenPress();
         }
@@ -339,20 +390,11 @@ void mousePressed() {
         if (OnHistogramShowScreen) {
             histogramShowScreenPress();
         }
-    }
+        if (OnPiChartShowScreen) {
+            piChartShowScreenPress();
+        }
+    
 
-}
-void mouseReleased() {
-    if (!errorMessageActive) {
-        if (currentScreen.hasHorizontalScroll) {
-            currentScreen.hscroll.click = false; 
-        }
-        if (currentScreen.hasVerticalScroll) {
-            currentScreen.vscroll.click = false;   
-        }
-        if (currentScreen.hasRangeSlider) {
-            currentScreen.rangeSlider.release();
-        }
     }
 
 }
@@ -375,25 +417,31 @@ void mouseWheel(MouseEvent event) {
 }
 void mouseDragged() {
     if (!errorMessageActive) {
-    if (currentScreen.hasRangeSlider) {
-        currentScreen.rangeSlider.drag();
-    }
-    if (currentScreen.hasVerticalScroll) {
-        if (currentScreen.vscroll.click ){
-        // calculate new Y offset based off of mouse position
-            YOFFSET = int(MINYOFFSET + ((mouseY-currentScreen.vscroll.h/2 + currentScreen.vscroll.gapY)/(SCREENY - 2*currentScreen.vscroll.gapY - currentScreen.vscroll.h))*(MAXYOFFSET-MINYOFFSET));
-            clampScroll();
+        currentScreen.updateHighlights();
+        handleDropDownHighlight(visualiseSelect);
+        if (currentScreen.hasRangeSlider) {
+            currentScreen.rangeSlider.drag();
         }
-    }
-    if (currentScreen.hasHorizontalScroll) {
-        if (currentScreen.hscroll.click) {
-        // calculate new X offset based off of mouse position
-            XOFFSET = int(MINXOFFSET + ((mouseX - currentScreen.hscroll.gapX)/(SCREENX - (currentScreen.hscroll.h + 2*currentScreen.hscroll.gapX) - currentScreen.hscroll.gapX - currentScreen.hscroll.w)*(MAXXOFFSET-MINXOFFSET)));
-            clampScroll();
+        if (currentScreen.hasVerticalScroll) {
+            if (currentScreen.vscroll.click ){
+            // calculate new Y offset based off of mouse position
+                YOFFSET = int(MINYOFFSET + ((mouseY-currentScreen.vscroll.h/2 + currentScreen.vscroll.gapY)/(SCREENY - 2*currentScreen.vscroll.gapY - currentScreen.vscroll.h))*(MAXYOFFSET-MINYOFFSET));
+                clampScroll();
+            }
         }
-    }
+        if (currentScreen.hasHorizontalScroll) {
+            if (currentScreen.hscroll.click) {
+            // calculate new X offset based off of mouse position
+                XOFFSET = int(MINXOFFSET + ((mouseX - currentScreen.hscroll.gapX)/(SCREENX - (currentScreen.hscroll.h + 2*currentScreen.hscroll.gapX) - currentScreen.hscroll.gapX - currentScreen.hscroll.w)*(MAXXOFFSET-MINXOFFSET)));
+                clampScroll();
+            }
+        }
     }
 
 }
 
 
+void mouseMoved() {
+    currentScreen.updateHighlights();
+    handleDropDownHighlight(visualiseSelect);
+}

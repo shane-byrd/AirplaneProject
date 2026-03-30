@@ -249,3 +249,117 @@ boolean isInteger(String str) {
         return false;
     }
 }
+
+void handleDropDownMousePress(DropDown dd) {
+    if (dd.openW == true) {
+        for (Button b : dd.selectionButtons) {
+            if (b.cursorOverWidget()) {
+                b.pressed = true;
+                b.mouseOver = false;
+                return;
+            }
+        }
+        for (InteriorDropDown idd : dd.sIDD) {
+            handleInteriorDropDownMousePress(idd);
+        }
+    }
+    else {
+        if (dd.cursorOverWidget()) {
+            dd.pressed = true;
+            dd.mouseOver = false;
+        }
+    }
+}
+
+void handleInteriorDropDownMousePress(InteriorDropDown idd) {
+    if (idd.openW == true) {  
+        for (Button b : idd.selectionButtons) {
+            if (b.cursorOverWidget()) {
+                b.pressed = true;
+                b.mouseOver = false;
+                return;
+            }
+        }
+        for (InteriorDropDown iddn : idd.sIDD) {
+            handleInteriorDropDownMousePress(iddn);
+        }
+    }
+    else {
+        if (idd.cursorOverWidget()) {
+            idd.pressed = true;
+            idd.mouseOver = false;
+        }
+    }
+}
+
+
+void handleDropDownHighlight(DropDown dd) {
+    if (dd.openW == true) {
+        for (Button b : dd.selectionButtons) {
+            b.mouseOver = b.cursorOverWidget();
+        }
+        for (InteriorDropDown idd : dd.sIDD) {
+            handleInteriorDropDownHighlight(idd);
+        }
+    }
+    dd.mouseOver = dd.cursorOverWidget();
+
+}
+
+void handleInteriorDropDownHighlight(InteriorDropDown idd) {
+    if (idd.openW == true) {  
+        for (Button b : idd.selectionButtons) {
+            b.mouseOver = b.cursorOverWidget();
+        }
+        for (InteriorDropDown iddn : idd.sIDD) {
+            handleInteriorDropDownHighlight(iddn);
+        }
+    }
+    idd.mouseOver = idd.cursorOverWidget();
+}
+
+void handleDropDownReleased(DropDown dd) {
+    if (dd.openW == true) {
+        for (Button b : dd.selectionButtons) {
+            b.pressed = false;
+            b.mouseOver = b.cursorOverWidget();
+        }
+        for (InteriorDropDown idd : dd.sIDD) {
+            idd.pressed = false;
+            idd.mouseOver = idd.cursorOverWidget();
+            handleInteriorDropDownReleased(idd);
+        }
+    }
+    dd.pressed = false;
+    dd.mouseOver = dd.cursorOverWidget();
+}
+
+void handleInteriorDropDownReleased(InteriorDropDown idd) {
+    if (idd.openW == true) {
+        for (Button b : idd.selectionButtons) {
+            b.pressed = false;
+            b.mouseOver = b.cursorOverWidget();
+        }
+        for (InteriorDropDown iddn : idd.sIDD) {
+            idd.pressed = false;
+            idd.mouseOver = idd.cursorOverWidget();
+            handleInteriorDropDownHighlight(iddn);
+        }
+    }
+    idd.pressed = false;
+    idd.mouseOver = idd.cursorOverWidget();
+}
+
+int getShowAmount(boolean[] whichValues) {
+    int sum = 0;
+    for (boolean val : whichValues) {
+        if (val) {
+            sum++;
+        }
+    }
+    return sum;
+}
+void updateScreenHorizontalScrollLimit() {
+    MAXXOFFSET = max(getShowAmount(whichValues) * 120 - SCREENX,0);
+
+}

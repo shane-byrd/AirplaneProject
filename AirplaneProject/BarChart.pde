@@ -27,8 +27,8 @@ class BarChart extends Graph {
             //draw y label
             fill(150);
             textFont(dataFont);
-            textAlign(CENTER, TOP);
-            text(yLabelBC, x - (w* backspace/2), y);
+            textAlign(LEFT, TOP);
+            text(yLabelBC, x - (w* backspace), y-20);
 
 
             //draw gridlines
@@ -36,8 +36,10 @@ class BarChart extends Graph {
             float yDiv = bestDivider(minBCval, maxBCval);
             textAlign(RIGHT,BOTTOM);
             float j = 0;
+            if (yDiv >0.0) {
             while (true) {
                 float yVal = minBCval + yDiv * j;
+
                 if (yVal > maxBCval) {
                     break;
                 } 
@@ -48,10 +50,17 @@ class BarChart extends Graph {
                     stroke(0);
                     line(x, yLoc, x-10, yLoc);
 
-                    text(yVal, x, yLoc);
+                    text(String.format("%.1f",yVal), x, yLoc);
                 }
                 j++;
             }
+            }
+            else {
+                textAlign(CENTER,CENTER);
+                fill(0);
+                text("There is no data to show",x+w/2,y+h/2);
+            }
+
             textAlign(CENTER, TOP);
 
 

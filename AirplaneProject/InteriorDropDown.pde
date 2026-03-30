@@ -35,7 +35,10 @@ class InteriorDropDown extends DropDown
         if (openW == true) {
             // draw background
             fill(backgroundColor);
-            rect(x+w+gapX,y-gapY,w+2*gapX,(buttonAmount ) * (h + gapY) +gapY ,6);
+            stroke(0);
+            noStroke();
+            strokeWeight(strokeWidth);
+            rect(x+w+gapX,y-gapY,w+2*gapX,(buttonAmount) * (h + gapY) +2*gapY ,2);
 
             for (Button b : selectionButtons) {
                 b.draw();
@@ -44,6 +47,47 @@ class InteriorDropDown extends DropDown
                 idd.draw();
             }
         }
+
+strokeWeight(strokeWidth);
+        if (pressed) {
+            stroke(220);
+            fill(buttonColor);
+            rect(x-xDepth,y+yDepth,w,h);
+            fill(220);
+            textFont(buttonFont);
+            textAlign(CENTER,CENTER);
+            text(textLabel, x+ w/2-xDepth, y + h/2 + yDepth);
+        }
+        else {
+            if (mouseOver) {
+                stroke(220);
+                fill(interiorSideColor);
+                quad(x,y, x,y+h, x-xDepth,y+h+yDepth, x-xDepth,y+yDepth);
+                quad(x,y+h, x+w,y+h, x+w-xDepth,y+h+yDepth, x-xDepth,y+h+yDepth);
+                fill(buttonColor);
+                rect(x,y,w,h);
+                fill(220);
+                textFont(buttonFont);
+                textAlign(CENTER,CENTER);
+                text(textLabel, x+ w/2, y + h/2);
+            }
+            else {
+                stroke(0);
+                noStroke();
+                strokeWeight(strokeWidth);
+                fill(interiorSideColor);
+                quad(x,y, x,y+h+1, x-xDepth,y+h+yDepth, x-xDepth,y+yDepth);
+                quad(x,y+h, x+w,y+h, x+w-xDepth,y+h+yDepth, x-xDepth,y+h+yDepth);
+                fill(buttonColor);
+                rect(x,y,w,h);
+                fill(0);
+                textFont(buttonFont);
+                textAlign(CENTER,CENTER);
+                text(textLabel, x+ w/2, y + h/2);
+            }
+        }
+        noStroke();
+        /*
         // draw button
         fill(buttonColor);
         rect(x,y,w,h,6);
@@ -53,7 +97,7 @@ class InteriorDropDown extends DropDown
         textFont(buttonFont);
         textAlign(CENTER,CENTER);
         text(textLabel, x+ w/2, y + h/2);
-
+        */
 
     }
     String whichButtonOver() {

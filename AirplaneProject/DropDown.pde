@@ -17,6 +17,15 @@ class DropDown extends Widget
     boolean changingButtonColor;
     boolean[] colorController;
     boolean border;
+
+    boolean pressed;
+    boolean mouseOver;
+    int strokeWidth;
+    float xDepth;
+    float yDepth;
+    color sideColor;
+    color interiorSideColor;
+
     DropDown(float x, float y, float w, float h, String idLabel, String textLabel, color buttonColor, color textLabelColor, PFont buttonFont, float gapY, float gapX, color backgroundColor, color topButtonColor, color secondaryButtonColor)
     {
         super(x,y,w,h,idLabel);
@@ -38,6 +47,15 @@ class DropDown extends Widget
         this.secondaryButtonColor = secondaryButtonColor;
         border = false;
         bottomY = y + h + gapY;
+
+        this.sideColor = color(red(topButtonColor)*.8,green(topButtonColor)*.8,blue(topButtonColor)*.8);
+        this.interiorSideColor = color(red(buttonColor)*.8,green(buttonColor)*.8,blue(buttonColor)*.8);
+        this.xDepth = 5;
+        this.yDepth = 5;
+        this.strokeWidth = 1;
+        this.pressed = false;
+        this.mouseOver = false;
+
     }
     void addButton(String buttonLabel, String buttonText) {
 
@@ -71,7 +89,10 @@ class DropDown extends Widget
         if (openW == true) {
             // draw background
             fill(backgroundColor);
-            rect(x-gapX,y-gapY,w+2*gapX,(buttonAmount +1 ) * (h + gapY) +gapY, 6 );
+            stroke(0);
+            noStroke();
+            strokeWeight(strokeWidth);
+            rect(x-gapX-3,y-gapY,w+2*gapX,(buttonAmount +1 ) * (h + gapY) +2*gapY,2 );
             int i = 0;
             for (InteriorDropDown idd : sIDD) {
                 idd.draw();
@@ -81,6 +102,47 @@ class DropDown extends Widget
                 i++;
             }
         }
+
+        strokeWeight(strokeWidth);
+        if (pressed) {
+            stroke(220);
+            fill(topButtonColor);
+            rect(x-xDepth,y+yDepth,w,h);
+            fill(220);
+            textFont(buttonFont);
+            textAlign(CENTER,CENTER);
+            text(textLabel, x+ w/2-xDepth, y + h/2 + yDepth);
+        }
+        else {
+            if (mouseOver) {
+                stroke(220);
+                fill(sideColor);
+                quad(x,y, x,y+h, x-xDepth,y+h+yDepth, x-xDepth,y+yDepth);
+                quad(x,y+h, x+w,y+h, x+w-xDepth,y+h+yDepth, x-xDepth,y+h+yDepth);
+                fill(topButtonColor);
+                rect(x,y,w,h);
+                fill(220);
+                textFont(buttonFont);
+                textAlign(CENTER,CENTER);
+                text(textLabel, x+ w/2, y + h/2);
+            }
+            else {
+                stroke(0);
+                noStroke();
+                strokeWeight(strokeWidth);
+                fill(sideColor);
+                quad(x,y, x,y+h+1, x-xDepth,y+h+yDepth, x-xDepth,y+yDepth);
+                quad(x,y+h, x+w,y+h, x+w-xDepth,y+h+yDepth, x-xDepth,y+h+yDepth);
+                fill(buttonColor);
+                rect(x,y,w,h);
+                fill(0);
+                textFont(buttonFont);
+                textAlign(CENTER,CENTER);
+                text(textLabel, x+ w/2, y + h/2);
+            }
+        }
+        noStroke();
+        /*
         // draw top button
         fill(topButtonColor);
         rect(x,y,w,h,6);
@@ -91,8 +153,8 @@ class DropDown extends Widget
         textAlign(CENTER,CENTER);
         text(textLabel, x+ w/2, y + h/2);
         }
-
-
+        */
+        }
 
     }
 
@@ -108,7 +170,10 @@ class DropDown extends Widget
         if (openW == true) {
             // draw background
             fill(backgroundColor);
-            rect(x-gapX,y-gapY,w+2*gapX,(buttonAmount +1 ) * (h + gapY) +gapY ,6);
+            stroke(0);
+            noStroke();
+            strokeWeight(strokeWidth);
+            rect(x-gapX-3,y-gapY,w+2*gapX,(buttonAmount +1 ) * (h + gapY) +2*gapY,2 );
 
             for (InteriorDropDown idd : sIDD) {
                 idd.draw();
@@ -129,7 +194,47 @@ class DropDown extends Widget
 
 
         }
+        strokeWeight(strokeWidth);
+        if (pressed) {
+            stroke(220);
+            fill(topButtonColor);
+            rect(x-xDepth,y+yDepth,w,h);
+            fill(220);
+            textFont(buttonFont);
+            textAlign(CENTER,CENTER);
+            text(textLabel, x+ w/2-xDepth, y + h/2 + yDepth);
+        }
+        else {
+            if (mouseOver) {
+                stroke(220);
+                fill(sideColor);
+                quad(x,y, x,y+h, x-xDepth,y+h+yDepth, x-xDepth,y+yDepth);
+                quad(x,y+h, x+w,y+h, x+w-xDepth,y+h+yDepth, x-xDepth,y+h+yDepth);
+                fill(topButtonColor);
+                rect(x,y,w,h);
+                fill(220);
+                textFont(buttonFont);
+                textAlign(CENTER,CENTER);
+                text(textLabel, x+ w/2, y + h/2);
+            }
+            else {
+                stroke(0);
+                noStroke();
+                strokeWeight(strokeWidth);
+                fill(sideColor);
+                quad(x,y, x,y+h+1, x-xDepth,y+h+yDepth, x-xDepth,y+yDepth);
+                quad(x,y+h, x+w,y+h, x+w-xDepth,y+h+yDepth, x-xDepth,y+h+yDepth);
+                fill(topButtonColor);
+                rect(x,y,w,h);
+                fill(0);
+                textFont(buttonFont);
+                textAlign(CENTER,CENTER);
+                text(textLabel, x+ w/2, y + h/2);
+            }
+        }
+        noStroke();
         // draw button
+        /*
         fill(topButtonColor);
         rect(x,y,w,h,6);
 
@@ -138,6 +243,7 @@ class DropDown extends Widget
         textFont(buttonFont);
         textAlign(CENTER,CENTER);
         text(textLabel, x+ w/2, y + h/2);
+        */
 
         }
 

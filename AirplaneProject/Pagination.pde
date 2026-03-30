@@ -12,10 +12,12 @@ void drawPageInfo() {
     endRow = min((currentPage + 1) * tableAmount, filteredFlights.size());
   }
   fill(#a8ceff);
-    rect(495,11.5,250,30,6);
+  stroke(0);
+    rect(463,11.5,210,30,6);
     fill(#000000);
-  String pageText = "Rows: " + startRow + " - " + endRow + " / " + filteredFlights.size() + "    Page " + (currentPage + 1) + " of " + totalPages;
-  text(pageText, 500, 20);
+  String pageText = startRow + " - " + endRow + " / " + filteredFlights.size() + "    Page " + (currentPage + 1) + " of " + totalPages;
+  text(pageText, 467, 20);
+  noStroke();
 }
 
 void updatePagination() {

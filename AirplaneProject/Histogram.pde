@@ -73,7 +73,7 @@ class Histogram extends Graph
   
             float valX = (width) * i;
             float locX = valX + x;
-            if (i%3 == 0) {
+            if (i%3 == 0 && i != 0) {
                 fill(0);
                 line(locX,y+h,locX,y+h+10);
 
@@ -95,7 +95,7 @@ class Histogram extends Graph
         textFont(dataFont);
         //draw y axis labels
         textAlign(RIGHT, TOP);
-        text(lowestFrequency,x,y+h+10);
+        text(lowestFrequency,x-5,y+h);
         text(highestFrequency,x,y-10);
 
 

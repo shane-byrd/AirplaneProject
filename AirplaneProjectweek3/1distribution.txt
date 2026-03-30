@@ -1,0 +1,21 @@
+
+Week 2 code added:
+
+Jasper (Xubo):
+searchBox
+
+Jimmy (Zhihan):
+Pagination
+edits to table class 
+
+Shane:
+BarChart,DataConvert,ErrorMessage,FilterData,Histogram
+edits made to 
+loadScreens
+loadgraphdata
+textbox
+textedit
+
+
+Mingqi:
+FilterFlights

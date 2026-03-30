@@ -10,7 +10,6 @@ void drawSearchBox() {
     fill(#f7f7f7);
     stroke(120);
   }
-
   rect(searchBoxX, searchBoxY, searchBoxW, searchBoxH, 6);
 
   fill(80);

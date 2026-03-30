@@ -1,6 +1,6 @@
 String[][] chooseGraphScatterPlotX = {
     {"scxDistance","Distance"},
-    {"scxDuration","Duration"},{"scxYear","Time (year)"}
+    {"scxDuration","Duration"}//,{"scxYear","Time (year)"}
 };
 String[][] chooseGraphScatterPlotInteriorX = {
     {"scxDelay","Delay Time >"},
@@ -8,7 +8,7 @@ String[][] chooseGraphScatterPlotInteriorX = {
 };
 String[][] chooseGraphScatterPlotY = {
     {"scyDistance","Distance"},
-    {"scyDuration","Duration"},{"scyYear","Time (year)"}
+    {"scyDuration","Duration"}//,{"scyYear","Time (year)"}
 };
 String[][] chooseGraphScatterPlotInteriorY = {
     {"scyDelay","Delay Time >"},
@@ -21,8 +21,9 @@ String[][] chooseGraphBarChartCat = {
 };
 String[][] chooseGraphBarChartData = {
     {"bcdDist","Mean Distance"}, {"bcdDelay","Mean delay time"},
-    {"bcdDuration","Mean flight duration"},{"bcdDiverted","% Diverted"},
-    {"bcdCancelled","% Cancelled"},{"bcdfreq","Frequency"}
+    {"bcdDuration","Mean flight duration"},
+    {"bcdDiverted","% Diverted"},{"bcdCancelled","% Cancelled"},
+    {"bcdfreq","Frequency"}
 };
 String[][] chooseHistoGramX = {
     {"hsgdDuration","Duration"},{"hsgdDistance","Distance"}
@@ -63,13 +64,15 @@ Set<String> monthSet = new HashSet<>(Arrays.asList(monthsStringArray));
 void loadHomeScreen() {
     homeScreen.staticRects.add(navBar);
     homeScreen.hasTextEdit = true;
+    /*
     TextEdit te = new TextEdit(400,500,300,120, "teid",
     color(#64da78),
     color(#64da78),
     color(0),
     smallFont,
     144);
-    homeScreen.addTextEdit(te);
+    */
+    //homeScreen.addTextEdit(te);
     RangeSlider rs = new RangeSlider(200,SCREENY/2, 600,50,"rs",
     5,5,
     12,12,
@@ -104,18 +107,18 @@ void loadTableScreen() {
     tableScreen.hasTable = true;
 
     Button prevPageButton = new Button(
-        750, 3, 80, 22, "prevPage", "Previous",
+        680, 3, 65, 40, "prevPage", "Previous\nPage",
         color(#5a90d6), color(#c25151), color(#000000), smallFont
     );
 
     Button nextPageButton = new Button(
-        835, 3, 80, 22, "nextPage", "Next",
+        754, 3, 65, 40, "nextPage", "Next\nPage",
         color(#5a90d6), color(#c25151), color(#000000), smallFont
     );
     tableScreen.addButton(nextPageButton);
     tableScreen.addButton(prevPageButton);
     Button clearButton = new Button(
-        792.5, 27, 80, 22, "clearButton", "Clear",
+        825, 14, 50, 22, "clearButton", "Clear",
         color(#c25151), color(#c25151), color(#000000), smallFont
     );
     tableScreen.addButton(clearButton);
@@ -137,7 +140,7 @@ void loadTableScreen() {
     tableScreen.hscroll = hscroll;
     tableScreen.vscroll = vscroll;
     Button searchOpen = new Button(
-        920,11.5,50,30,
+        890,11.5,50,30,
         "searchOption", "Search",
     color(#ffe666),
     color(#f7edbc),
@@ -146,11 +149,11 @@ void loadTableScreen() {
     );
     tableScreen.addButton(searchOpen);
     DropDown filterColumnMenu = new DropDown(
-    975, 11.5, 120, 30, "filterColumn", "Filter: All",
+    955, 11.5, 130, 30, "filterColumn", "Filter: All",
     color(#ffe666),
     color(#000000),
     smallFont,
-    3, 6,
+    7, 9,
     color(#f7edbc),
     color(#ffe600),
     color(#c25151)
@@ -172,11 +175,11 @@ void loadTableScreen() {
 
     tableScreen.addDropDownMenu(filterColumnMenu);
     DropDown showMenu = new DropDown(
-            170,11.5,100,30,"show","Show", 
+            145,11.5,100,30,"show","Show", 
         color(#5a90d6), // Button Color
         color(#000000), // text Color
         smallFont,
-        3,6,            // xgap, ygap
+        7,9,            // xgap, ygap
         color(#a8ceff), // background color
         color(#125ab8), // top button
         color(#c25151)  // secondary button
@@ -208,35 +211,37 @@ void loadTableScreen() {
 
     // Jasper (Xubo):
     DropDown sortMenu = new DropDown(
-        280,11.5,200,30,"sort","Sort", 
+        260,11.5,200,30,"sort","Sort", 
     color(#5a90d6), // Button Color
     color(#000000), // text Color
     smallFont,
-    3,6,            // xgap, ygap
+    7,9,            // xgap, ygap
     color(#a8ceff), // background color
     color(#125ab8), // top button
     color(#c25151)  // secondary button
     );
-    sortMenu.addButton("airlineAsc", "Airline Ascending");
-    sortMenu.addButton("airlineDesc", "Airline Descending");
-    sortMenu.addButton("distanceAsc", "Distance Ascending");
-    sortMenu.addButton("distanceDesc", "Distance Descending");
-    sortMenu.addButton("depAsc", "Departure Time Ascending");
-    sortMenu.addButton("depDesc", "Departure Time Descending");
-    sortMenu.addButton("arrAsc", "Arrival Time Ascending");
-    sortMenu.addButton("arrDesc", "Arrival Time Descending");
+    sortMenu.addButton("sortDataairlineAsc", "Airline Ascending");
+    sortMenu.addButton("sortDataairlineDesc", "Airline Descending");
+    sortMenu.addButton("sortDatadistanceAsc", "Distance Ascending");
+    sortMenu.addButton("sortDatadistanceDesc", "Distance Descending");
+    sortMenu.addButton("sortDatadepAsc", "Departure Time Ascending");
+    sortMenu.addButton("sortDatadepDesc", "Departure Time Descending");
+    sortMenu.addButton("sortDataarrAsc", "Arrival Time Ascending");
+    sortMenu.addButton("sortDataarrDesc", "Arrival Time Descending");
     // Jasper (Xubo)
 
     tableScreen.addDropDownMenu(showMenu);
     tableScreen.addDropDownMenu(sortMenu);
 }
 void loadGraphCreateScreen() {
+
+
     graphCreateScreen.staticRects.add(navBar);
     DropDown grcMenu = new DropDown(100,200,250,50,"chooseGraph","Choose Graph Type",
         color(#9657df), // Button Color
         color(#000000), // text Color
         smallFont,
-        3,6,            // xgap, ygap
+        7,9,            // xgap, ygap
         color(#bc85ff), // background color
         color(#9600df), // top button
         color(#adadae)  // secondary button
@@ -245,12 +250,13 @@ void loadGraphCreateScreen() {
     grcMenu.addButton("bcOption","Bar Chart");
     grcMenu.addButton("scOption","Scatter Plot");
     grcMenu.addButton("hOption","Histogram");
+    grcMenu.addButton("piOption","Pi Chart");
 
     DropDown histogramDataChoose = new DropDown(400,200,250,50,"hsgData","Data",
         color(#9657df), // Button Color
         color(#000000), // text Color
         smallFont,
-        3,6,            // xgap, ygap
+        7,9,            // xgap, ygap
         color(#bc85ff), // background color
         color(#9600df), // top button
         color(#adadae)  // secondary button
@@ -261,7 +267,7 @@ void loadGraphCreateScreen() {
         color(#9657df), // Button Color
         color(#000000), // text Color
         smallFont,
-        3,6,            // xgap, ygap
+        7,9,            // xgap, ygap
         color(#bc85ff), // background color
         color(#9600df), // top button
         color(#adadae)  // secondary button
@@ -281,7 +287,7 @@ void loadGraphCreateScreen() {
         color(#9657df), // Button Color
         color(#000000), // text Color
         smallFont,
-        3,6,            // xgap, ygap
+        7,9,            // xgap, ygap
         color(#bc85ff), // background color
         color(#9600df), // top button
         color(#adadae)  // secondary button
@@ -304,7 +310,7 @@ void loadGraphCreateScreen() {
         color(#9657df), // Button Color
         color(#000000), // text Color
         smallFont,
-        3,6,            // xgap, ygap
+        7,9,            // xgap, ygap
         color(#bc85ff), // background color
         color(#9600df), // top button
         color(#adadae)  // secondary button
@@ -318,12 +324,31 @@ void loadGraphCreateScreen() {
     }
     bcCat.addButton("bccAirline","Airline");
     
+    DropDown piCat = new DropDown(400,200,250,50,"piCatOpt","Category",
+        color(#9657df), // Button Color
+        color(#000000), // text Color
+        smallFont,
+        7,9,            // xgap, ygap
+        color(#bc85ff), // background color
+        color(#9600df), // top button
+        color(#adadae)  // secondary button
+        );
+    i=0;
+    for (String[] s : chooseGraphBarChartCat) {
+        piCat.addInterioDropDown(s[0],s[1]);
+        piCat.sIDD.get(i).addButton("bccDep"+s[1],s[1].substring(0,s[1].length()-2)+" (Departure)");
+        piCat.sIDD.get(i).addButton("bccDest"+s[1],s[1].substring(0,s[1].length()-2)+" (Destination)");
+        i++;
+    }
+    piCat.addButton("bccAirline","Airline");
+    piCat.visible = false;
+    graphCreateScreen.addDropDownMenu(piCat);
 
     DropDown bcData = new DropDown(700,200,250,50,"bcDataOpt","Data",
         color(#9657df), // Button Color
         color(#000000), // text Color
         smallFont,
-        3,6,            // xgap, ygap
+        7,9,            // xgap, ygap
         color(#bc85ff), // background color
         color(#9600df), // top button
         color(#adadae)  // secondary button
@@ -337,7 +362,7 @@ void loadGraphCreateScreen() {
         color(#9657df), // Button Color
         color(#000000), // text Color
         smallFont,
-        3,6,            // xgap, ygap
+        7,9,            // xgap, ygap
         color(#bc85ff), // background color
         color(#9600df), // top button
         color(#adadae)  // secondary button
@@ -355,12 +380,23 @@ void loadGraphCreateScreen() {
     yDDM.sIDD.get(1).addButton("scyDayActualDep","Actual Departure");
     yDDM.sIDD.get(1).addButton("scyDaySchedArr","Scheduled Arrival");
     yDDM.sIDD.get(1).addButton("scyDayActualArr","Actual Arrival");
-    
+
+    TextEdit hbin = new TextEdit(700,200,250,50, "histogramBin",
+    color(#FFD580),
+    color(#a1e6ff),
+    color(0),
+    smallFont,
+    144,
+    "Bin Number (<100)");
+    hbin.visible = false;
+    graphCreateScreen.hasTextEdit = true;
+    graphCreateScreen.addTextEdit(hbin);
+
     DropDown chooseNumber = new DropDown(100,450,250,50,"bcNum","Choose Show Number",
         color(#9657df), // Button Color
         color(#000000), // text Color
         smallFont,
-        3,6,            // xgap, ygap
+        7,9,            // xgap, ygap
         color(#bc85ff), // background color
         color(#9600df), // top button
         color(#adadae)  // secondary button
@@ -377,12 +413,15 @@ void loadGraphCreateScreen() {
     color(0),         // text color
     smallFont
     );
+    TextStore bcChooseNumHTS = new TextStore(100,380,250,50, "bcNumH","",
+    color(#bfbfbf), // Button Color
+    smallFont);
 
     DropDown bcSort = new DropDown(400,450,250,50,"bcSort","Sort By",
         color(#9657df), // Button Color
         color(#000000), // text Color
         smallFont,
-        3,6,            // xgap, ygap
+        7,9,            // xgap, ygap
         color(#bc85ff), // background color
         color(#9600df), // top button
         color(#adadae)  // secondary button
@@ -396,6 +435,9 @@ void loadGraphCreateScreen() {
     color(0),         // text color
     smallFont
     );
+    TextStore bcSortHTS = new TextStore(400,380,250,50, "bcSortH","",
+    color(#bfbfbf), // Button Color
+    smallFont);
 
     Button loadGraph = new Button(500,70,100,45,"loadGraph", "Create Graph",
     color(#9657df), // Button Color
@@ -403,31 +445,67 @@ void loadGraphCreateScreen() {
     color(0),         // text color
     smallFont
     );
+    loadGraph.xDepth=8;
+    loadGraph.yDepth=8;
+    loadGraph.active = false;
+
     Button graphTypeholder = new Button(100, 130, 250, 50, "typeGraphHolder", " ",
     color(#adadae), // Button Color
     color(#adadae), // secondary Button
     color(0),         // text color
     smallFont
     );
+    TextStore gTypeH = new TextStore(100,130,250,50, "gTypeH","",
+    color(#bfbfbf), // Button Color
+    smallFont);
+
     Button graphFirstHolder = new Button(400, 130, 250, 50, "fstDataHolder", " ",
     color(#adadae), // Button Color
     color(#adadae), // secondary Button
     color(0),         // text color
     smallFont
     );
+    TextStore gFirstH = new TextStore(400,130,250,50, "1dataH","",
+    color(#bfbfbf), // Button Color
+    //color(#adadae), // Button Color
+    smallFont);
+
     Button graphSecondHolder = new Button(700, 130, 250, 50, "scndDataHolder", " ",
     color(#adadae), // Button Color
     color(#adadae), // secondary Button
     color(0),         // text color
     smallFont
     );
+    TextStore gSecondH = new TextStore(700,130,250,50, "2dataH","",
+    color(#bfbfbf), // Button Color
+    smallFont);
+
     StaticRect behindR = new StaticRect(90,120,800, 120,
     "behindLabel",
     color(#7c588a),
     true);
+    /*
+    bcChooseNumHold = bcNumH
+    bcSortHolder = bcSortH
+    typeGraphHolder = gTypeH
+    fstDataHolder = 1dataH
+    scndDataHolder = 2dataH
+    */
+    graphCreateScreen.addTextStore(gSecondH);
+    graphCreateScreen.addTextStore(gFirstH);
+    graphCreateScreen.addTextStore(gTypeH);
+    graphCreateScreen.addTextStore(bcSortHTS);
+    graphCreateScreen.addTextStore(bcChooseNumHTS);
+
+    gSecondH.visible = false;
+    gFirstH.visible = false;
+    gTypeH.visible = true;
+    bcSortHTS.visible = false;
+    bcChooseNumHTS.visible = false;
+    
     //graphCreateScreen.addStaticRect(behindR);
-    graphCreateScreen.addButton(bcSortHolder);
-    graphCreateScreen.addButton(bcChooseNumHolder);
+    //graphCreateScreen.addButton(bcSortHolder);
+    //graphCreateScreen.addButton(bcChooseNumHolder);
     bcChooseNumHolder.visible = false;
     bcSortHolder.visible = false;
     graphCreateScreen.addDropDownMenu(bcSort);
@@ -452,17 +530,17 @@ void loadGraphCreateScreen() {
 
 
     graphCreateScreen.addButton(loadGraph);
-    graphCreateScreen.addButton(graphTypeholder);
+    //graphCreateScreen.addButton(graphTypeholder);
     graphFirstHolder.visible = false;
     graphSecondHolder.visible = false;
-    graphCreateScreen.addButton(graphFirstHolder);
-    graphCreateScreen.addButton(graphSecondHolder);
+    //graphCreateScreen.addButton(graphFirstHolder);
+    //graphCreateScreen.addButton(graphSecondHolder);
 }
 void loadGraphShowScreen() {
     graphShowScreen.staticRects.add(navBar);
     graphShowScreen.addButton(filterDataChange);
     graphShowScreen.hasScatterPlot = true;
-    ScatterPlot sp = new ScatterPlot(100,120,900,570, mediumFont, smallFont, 5,color(#FF0000));
+    ScatterPlot sp = new ScatterPlot(100,120,900,570, mediumFont, smallFont, 5,color(#f55656));
     graphShowScreen.scatterPlot = sp; 
 
     Button backButton = new Button(1100, 57, 50, 50, "backW", "Back",
@@ -504,7 +582,7 @@ void loadFilterDataScreen() {
         color(#f5af5f), // Button Color
         color(#000000), // text Color
         smallFont,
-        3,6,            // xgap, ygap
+        7,9,            // xgap, ygap
         color(#f5bf82), // background color
         color(#e37d30), // top button
         color(#adadae)  // secondary button
@@ -539,7 +617,7 @@ void loadFilterDataScreen() {
         color(#f5af5f), // Button Color
         color(#000000), // text Color
         smallFont,
-        3,6,            // xgap, ygap
+        7,9,            // xgap, ygap
         color(#f5bf82), // background color
         color(#e37d30), // top button
         color(#adadae)  // secondary button
@@ -560,7 +638,7 @@ void loadFilterDataScreen() {
         color(#f5af5f), // Button Color
         color(#000000), // text Color
         smallFont,
-        3,6,            // xgap, ygap
+        7,9,            // xgap, ygap
         color(#f5bf82), // background color
         color(#e37d30), // top button
         color(#adadae)  // secondary button
@@ -574,7 +652,7 @@ void loadFilterDataScreen() {
         color(#f5af5f), // Button Color
         color(#000000), // text Color
         smallFont,
-        3,6,            // xgap, ygap
+        7,9,            // xgap, ygap
         color(#f5bf82), // background color
         color(#e37d30), // top button
         color(#adadae)  // secondary button
@@ -588,6 +666,10 @@ void loadFilterDataScreen() {
     color(0),         // text color
     smallFont
     );
+    typeDataFilterHolder.visible = false;
+    TextStore FTypeH = new TextStore(100,100,250,40, "FTypeH","",
+    color(#bfbfbf), // Button Color
+    smallFont);
 
     Button fstTypeHolder = new Button(400, 100, 250, 40, "fstTypeHolder", " ",
     color(#adadae), // Button Color
@@ -595,6 +677,9 @@ void loadFilterDataScreen() {
     color(0),         // text color
     smallFont
     );
+    TextStore oneTypeH = new TextStore(400,100,250,40, "1TypeH","",
+    color(#bfbfbf), // Button Color
+    smallFont);
     fstTypeHolder.visible = false;
 
     Button scndTypeHolder = new Button(700, 100, 250, 40, "scndTypeHolder", " ",
@@ -603,6 +688,10 @@ void loadFilterDataScreen() {
     color(0),         // text color
     smallFont
     );
+    TextStore twoTypeH = new TextStore(700,100,250,40, "2TypeH","",
+    color(#bfbfbf), // Button Color
+    smallFont);
+
     scndTypeHolder.visible = false;
     filterDataScreen.hasTextEdit = true;
     TextEdit valFirst = new TextEdit(100, 500, 180, 40, "valueFirstHolder",
@@ -610,18 +699,21 @@ void loadFilterDataScreen() {
     color(#a1e6ff),
     color(0),
     mediumFont,
-    144);
+    144,
+    "Default..");
 
     TextEdit valSecond = new TextEdit(400, 500, 180, 40, "valueSecondHolder", 
     color(#FFD580),
     color(#a1e6ff),
     color(0),
     mediumFont,
-    144);
+    144,
+    "Default..");
     valFirst.visible = false;
     valSecond.visible = false;
     filterDataScreen.addTextEdit(valFirst);
     filterDataScreen.addTextEdit(valSecond);
+    
 
     Button valueFstHolder = new Button(100, 500, 180, 40, "valueFstHolder", " ",
     color(#9adcff), // Button Color
@@ -630,6 +722,9 @@ void loadFilterDataScreen() {
     smallFont
     );
     valueFstHolder.visible = false;
+    TextStore oneValH = new TextStore(100,500,250,40, "1valH","",
+    color(#bfbfbf), // Button Color
+    smallFont);
 
     Button valueScndHolder = new Button(400, 500, 180, 40, "valueScndHolder", " ",
     color(#9adcff), // Button Color
@@ -638,6 +733,41 @@ void loadFilterDataScreen() {
     smallFont
     );
     valueScndHolder.visible = false;
+    TextStore twoValH = new TextStore(400,500,250,40, "2valH","",
+    color(#bfbfbf), // Button Color
+    smallFont);
+    filterDataScreen.addTextStore(oneValH);
+    filterDataScreen.addTextStore(twoValH);
+    filterDataScreen.addTextStore(twoTypeH);
+    filterDataScreen.addTextStore(oneTypeH);
+    filterDataScreen.addTextStore(FTypeH);
+    oneValH.visible = false;
+    twoValH.visible = false;
+    twoTypeH.visible = false;
+    oneTypeH.visible = false;
+    FTypeH.visible = true;
+    /*
+    valueScndHolder = 2valH
+    valueFstHolder = 1valH
+    scndTypeHolder = 2TypeH
+    fstTypeHolder = 1TypeH
+    typeDataFilterHolder = FTypeH
+    
+    buttonMap.get("typeDataFilterHolder")
+    textStoreMap.get("FTypeH")
+
+    buttonMap.get("fstTypeHolder")
+    textStoreMap.get("1TypeH")
+
+    buttonMap.get("scndTypeHolder")
+    textStoreMap.get("2TypeH")
+
+    buttonMap.get("valueScndHolder")
+    textStoreMap.get("2valH")
+
+    buttonMap.get("valueFstHolder")
+    textStoreMap.get("1valH")
+    */
 
     filterDataScreen.addButton(valueFstHolder);
     filterDataScreen.addButton(valueScndHolder);
@@ -656,12 +786,14 @@ void loadFilterDataScreen() {
     color(0),         // text color
     smallFont
     );
+    addNewFilter.active = false;
     Button removeFilter = new Button(SCREENX-100-20,130,100,45,"removeFilter", "Remove Filters",
     color(#f5af5f), // Button Color
     color(#adadae), // secondary Button
     color(0),         // text color
     smallFont
     );
+    removeFilter.active = false;
     filterDataScreen.addButton(removeFilter);
     filterDataScreen.addButton(addNewFilter);
 
@@ -710,5 +842,36 @@ void loadHistogramShowScreen() {
     );
     histogramShowScreen.addButton(backButton);
 
+
+}
+
+void loadPiChartShowScreen() {
+    piChartShowScreen.staticRects.add(navBar);
+    piChartShowScreen.addButton(filterDataChange);
+    Button backButton = new Button(1100, 57, 50, 50, "backW", "Back",
+    color(#9657df), // Button Color
+    color(#adadae), // secondary Button
+    color(0),         // text color
+    smallFont
+    );
+    piChartShowScreen.addButton(backButton);
+    piChartShowScreen.hasPiChart = true;
+    color[] cArray = {
+    color(#cc3c14),
+    color(#7e32c9),
+    color(#19b01b),
+    color(#fffc57),
+    color(#1db4f5),
+    color(#de3cce),
+    color(#96f255),
+    color(#55f2c8),
+    color(#55c8f2),
+    color(#5f55f2),
+    color(#b355f2),
+    color(#f255d8),
+    color(#f25591)
+    };
+    PiChart pi = new PiChart(100,120,900,570,450, mediumFont, smallFont,cArray);
+    piChartShowScreen.piChart = pi;
 
 }

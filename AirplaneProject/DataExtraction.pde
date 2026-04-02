@@ -145,6 +145,7 @@ String getStringData(Flight f, String category) {
         return f.destCity;
     }
     if (category.equals("State (Destination)")) {
+        //println(33);
         return f.destState;
     }
 

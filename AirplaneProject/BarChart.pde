@@ -1,3 +1,4 @@
+
 class BarChart extends Graph {
     color dataColor;
     float gapX;
@@ -8,100 +9,84 @@ class BarChart extends Graph {
         this.gapX = gapX;
     }
 
-    //void draw(String[] labels, float[] values, float minY, float maxY, String yLabel, String titleText) {
     void draw() {
+        float extraspace = 1.2;
+        float backspace = 0.1;
+        float ySpan = safeAxisSpan(minBCval, maxBCval);
 
-            float extraspace = 1.2;
-            float backspace = 0.1;
+        fill(255);
+        rect(x - w*backspace, y - h*backspace, w*extraspace, h*extraspace);
 
-            // draw background
-            fill(255);
-            rect(x - w*backspace, y - h*backspace, w*extraspace, h*extraspace);
+        // draw title
+        fill(0);
+        textFont(titleFont);
+        textAlign(LEFT,TOP);
+        text(titleBC,x,y - h*backspace + 10);
 
-            // draw title
-            fill(0);
-            textFont(titleFont);
-            textAlign(LEFT,TOP);
-            text(titleBC,x,y - h*backspace + 10);
+        //draw y label
+        fill(150);
+        textFont(dataFont);
+        textAlign(LEFT, TOP);
+        text(yLabelBC, x - (w* backspace), y-20);
 
-            //draw y label
-            fill(150);
-            textFont(dataFont);
-            textAlign(LEFT, TOP);
-            text(yLabelBC, x - (w* backspace), y-20);
-
-
-            //draw gridlines
-            fill(0);
-            float yDiv = bestDivider(minBCval, maxBCval);
-            textAlign(RIGHT,BOTTOM);
-            float j = 0;
-            if (yDiv >0.0) {
-            while (true) {
-                float yVal = minBCval + yDiv * j;
-
-                if (yVal > maxBCval) {
-                    break;
-                } 
-                float yLoc = y + h - h*((yVal - minBCval)/(maxBCval-minBCval));
-                if (Math.abs(yLoc - (y)) > 10 && Math.abs(yLoc - (y+h)) > 10) {
-                    stroke(220);
-                    line(x, yLoc, x+w, yLoc);
-                    stroke(0);
-                    line(x, yLoc, x-10, yLoc);
-
-                    text(String.format("%.1f",yVal), x, yLoc);
-                }
-                j++;
+        fill(0);
+        float yDiv = bestDivider(minBCval, maxBCval);
+        textAlign(RIGHT,BOTTOM);
+        float j = 0;
+        if (yDiv > 0.0) {
+        while (true) {
+            float yVal = minBCval + yDiv * j;
+            if (yVal > maxBCval) {
+                break;
             }
+            float yLoc = y + h - h*((yVal - minBCval)/ySpan);
+            if (Math.abs(yLoc - y) > 10 && Math.abs(yLoc - (y+h)) > 10) {
+                stroke(220);
+                line(x, yLoc, x+w, yLoc);
+                stroke(0);
+                line(x, yLoc, x-10, yLoc);
+                text(String.format("%.0f", yVal), x, yLoc);
             }
-            else {
+            j++;
+        }
+        }
+        else {
                 textAlign(CENTER,CENTER);
                 fill(0);
                 text("There is no data to show",x+w/2,y+h/2);
-            }
+        }
 
-            textAlign(CENTER, TOP);
+        textAlign(CENTER, TOP);
 
-
-            // calculate width of each bar
-            //float width = (w/categoryMap.size()) - gapX;
-            float width = (w/showNumBC) - gapX;
-            int i = 0;
-
-            for (Map.Entry<String, Float> entry : showBCdata) { 
-                float val = entry.getValue();
-                float valX = gapX + (width + gapX) * i;
-                float locX = valX + x;
-                stroke(0);
-                fill(dataColor);
-                rect(locX, y+h - h*(val - minBCval)/(maxBCval - minBCval), width, h*(val - minBCval)/(maxBCval - minBCval));
-                //draw text
-                fill(0);
-                text(entry.getKey(), locX + width/2, y+h+5);
-                i++;
-            }
-
-            /*
-            for (Map.Entry<String, Float> entry : categoryMap.entrySet()) {
-                float val = entry.getValue();
-                float valX = gapX + (width + gapX) * i;
-                float locX = valX + x;
-                stroke(0);
-                fill(dataColor);
-                rect(locX, y+h - h*(val - minBCval)/(maxBCval - minBCval), width, h*(val - minBCval)/(maxBCval - minBCval));
-                //draw text
-                fill(0);
-                text(entry.getKey(), locX + width/2, y+h+5);
-                i++;
-            }
-            */
+        if (showBCdata == null || showBCdata.size() == 0) {
             stroke(0);
-
-            //Vertical line
             line(x,y,x,y+h);
-
-            // horizontal line
             line(x,y+h, x+w,y+h);
+            return;
+        }
+
+        int startIndex = constrain(barChartVisibleStartIndex, 0, max(showBCdata.size() - 1, 0));
+        int endIndex = constrain(barChartVisibleEndIndexExclusive, startIndex + 1, showBCdata.size());
+        int visibleCount = max(1, endIndex - startIndex);
+        float width = (w / visibleCount) - gapX;
+
+        int localIndex = 0;
+        for (int i = startIndex; i < endIndex; i++) {
+            Map.Entry<String, Float> entry = showBCdata.get(i);
+            float val = constrain(entry.getValue(), minBCval, maxBCval);
+            float valX = gapX + (width + gapX) * localIndex;
+            float locX = valX + x;
+            float rectH = h*(val - minBCval)/ySpan;
+            stroke(0);
+            fill(dataColor);
+            rect(locX, y+h - rectH, width, rectH);
+            fill(0);
+            text(entry.getKey(), locX + width/2, y+h+5);
+            localIndex++;
+        }
+
+        stroke(0);
+        line(x,y,x,y+h);
+        line(x,y+h, x+w,y+h);
     }
 }

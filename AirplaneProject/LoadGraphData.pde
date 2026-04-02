@@ -1,4 +1,4 @@
-//text label name
+
 void loadScatterPlotData(String xlabel, String ylabel) {
     String type = "";
     if (xlabel.equals("Distance")) {
@@ -95,66 +95,75 @@ void loadScatterPlotData(String xlabel, String ylabel) {
     scatterTypeY = type;
     float[] minMaxY = getMinAndMax(scatterPlotYData);
     float[] minMaxX = getMinAndMax(scatterPlotXData);
-    minXsp = minMaxX[0];
-    maxXsp = minMaxX[1];
-    minYsp = minMaxY[0];
-    maxYsp = minMaxY[1];
+
+    scatterPlotRawMinX = min(0,minMaxX[0]);
+    scatterPlotRawMaxX = minMaxX[1] * 1.2;
+    scatterPlotRawMinY = min(minMaxY[0],0);
+    scatterPlotRawMaxY = minMaxY[1] * 1.2;
+
+    minXsp = scatterPlotRawMinX;
+    maxXsp = ensureDistinctUpper(scatterPlotRawMinX, scatterPlotRawMaxX);
+    //maxYsp = ensureDistinctUpper(minMaxX[0], minMaxY[1]);
+    minYsp = scatterPlotRawMinY;
+    //minYsp = minMaxY[0];
+    //minXsp = minMaxX[0];
+    maxYsp = ensureDistinctUpper(scatterPlotRawMinY, scatterPlotRawMaxY);
+    maxYsp = ensureDistinctUpper(minMaxY[0], minMaxY[1]);
     spTitle = "Scatter Plot of " +spXlabel+ " vs. "+ spYlabel;
 
+    resetScatterPlotScaleControls();
 }
 
 void loadBarChartData(String category, String data) {
     categoryMap = getHashData(category,data,filteredFlights);
-
     if (categoryMap.size() < showNumBC) {
         showNumBC = categoryMap.size();
     }
     List<Map.Entry<String, Float>> sorted = new ArrayList<>(categoryMap.entrySet());
-    for (Map.Entry<String, Float> entry : sorted) {
-        String key = entry.getKey();
-        Float value = entry.getValue();
-    }
     if (ascendingBC) {
-        sorted.sort(Map.Entry.comparingByValue()); // ascending
+        sorted.sort(Map.Entry.comparingByValue());
     }
     else {
-        sorted.sort(Map.Entry.comparingByValue(Comparator.reverseOrder())); // descending
+        sorted.sort(Map.Entry.comparingByValue(Comparator.reverseOrder()));
     }
     showBCdata = sorted.subList(0, Math.min(showNumBC, sorted.size()));
 
     float[] minmaxarray = getMinMaxShowData();
-    //float[] minmaxarray = getMinMaxBCVal();
-    minBCval = minmaxarray[0];
-    maxBCval = minmaxarray[1];
-    titleBC = data +" for " + category + " Bar Chart";
-    yLabelBC =data;
-}
+    barChartRawMinY = min(minmaxarray[0],0);
+    barChartRawMaxY = minmaxarray[1] * 1.3;
+    minBCval = barChartRawMinY;
+    maxBCval = ensureDistinctUpper(barChartRawMinY, barChartRawMaxY);
 
+    barChartVisibleStartIndex = 0;
+    barChartVisibleEndIndexExclusive = showBCdata.size();
+
+    titleBC = data +" for " + category + " bar chart";
+    yLabelBC = data;
+
+    resetBarChartScaleControls();
+}
 
 void loadHistogramData(String category, String binAmount) {
     String type="";
     switch(category) {
         case "Duration":
             histogramData = getDuration(filteredFlights);
-            type = "timeScatter";
             break;
         case "Distance":
             histogramData = getDistance(filteredFlights);
             break;
         case "Time of Day: Departure":
-            type="timeScatter";
+            type="time";
             histogramData = getTimeDayATD(filteredFlights);
             break;
         case "Time of Day: Destination":
-            type="timeScatter";
+            type="time";
             histogramData = getTimeDayATD(filteredFlights);
             break;
         case "Delay Time: Departure":
-        type = "timeScatter";
             histogramData = getDepartureDelay(filteredFlights);
             break;
         case "Delay Time: Destination":
-        type="timeScatter";
             histogramData = getArrivalDelay(filteredFlights);
             break;
         case "Date":
@@ -166,15 +175,17 @@ void loadHistogramData(String category, String binAmount) {
     }
     histogramYLabel = category;
     Collections.sort(histogramData);
-    minValueHistogram = histogramData.get(0); 
-    maxValueHistogram = histogramData.get(histogramData.size()-1);
+    histogramRawMinX = histogramData.get(0);
+    histogramRawMaxX = histogramData.get(histogramData.size()-1);
+    minValueHistogram = histogramRawMinX;
+    maxValueHistogram = histogramRawMaxX;
     histogramBinAmount = float(binAmount);
-    float intervalValueWidth = histogramShowScreen.histogram.getIntervalWidth(histogramBinAmount, minValueHistogram, maxValueHistogram);
+    float intervalValueWidth = histogramShowScreen.histogram.getIntervalWidth(histogramBinAmount, histogramRawMinX, histogramRawMaxX);
     intervalWidthHistogram = intervalValueWidth;
     int i = 0;
     intervalFrequencyData = new int[int(histogramBinAmount)+1];
     for (float value : histogramData) {
-        if (value <((i+1)*intervalValueWidth) + minValueHistogram) {
+        if (value <((i+1)*intervalValueWidth) + histogramRawMinX) {
             intervalFrequencyData[i]++;
         }
         else {
@@ -184,7 +195,6 @@ void loadHistogramData(String category, String binAmount) {
             }
             intervalFrequencyData[i]++;
         }
-
     }
     int minfreq = 0;
     int maxfreq = intervalFrequencyData[0];
@@ -196,17 +206,15 @@ void loadHistogramData(String category, String binAmount) {
             maxfreq = freq;
         }
     }
-    if (minfreq > 0) {
-        minfreqHistogram = (int) ((float)minfreq/2.0);
-    }
     hsType = type;
-    minfreqHistogram = minfreq;
-    maxfreqHistogram = maxfreq;
+    histogramRawMinY = min(minfreq,0);
+    histogramRawMaxY = (int)( (float)maxfreq * 1.5);
+    minfreqHistogram = histogramRawMinY;
+    maxfreqHistogram = max(1, histogramRawMaxY);
     histogramTitle = "Histogram of "+category+" with "+String.format("%.0f",histogramBinAmount)+" intervals.";
 
+    resetHistogramScaleControls();
 }
-
-
 String getCorrectFormat(float input, String type) {
     if (type == "dateOneYear") {
         return String.format("%.0f",input);

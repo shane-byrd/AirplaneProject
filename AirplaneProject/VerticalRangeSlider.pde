@@ -1,5 +1,5 @@
 
-class RangeSlider extends Widget {
+class VerticalRangeSlider extends Widget {
     float handleW;
     float handleH;
 
@@ -20,10 +20,9 @@ class RangeSlider extends Widget {
     float minDisplayValue;
     float maxDisplayValue;
 
-    RangeSlider(
+    VerticalRangeSlider(
         float x, float y, float w, float h,
         String idLabel,
-        float gapX, float gapY,
         float handleW, float handleH,
         color trackColor,
         color selectedTrackColor,
@@ -46,32 +45,40 @@ class RangeSlider extends Widget {
         draggingEnd = false;
         displayLabel = "Visible";
         minDisplayValue = 0;
-        maxDisplayValue = 100;
+        maxDisplayValue = 1;
     }
 
     void draw() {
         stroke(0);
-        float trackY = y + h/2 - 4;
-        float trackH = 8;
+        float trackX = x + w/2 - 4;
+        float trackW = 8;
 
-        float startX = getStartHandleX();
-        float endX = getEndHandleX();
+        float lowerY = getStartHandleY();
+        float upperY = getEndHandleY();
 
         fill(textColor);
         textFont(sliderFont);
-        textAlign(LEFT, CENTER);
-        text(displayLabel + ": " + formatScaleValue(getDisplayStartValue()) + " - " + formatScaleValue(getDisplayEndValue()), x+60, y-5 );
+        textAlign(LEFT, TOP);
+        text(displayLabel + ": " + formatScaleValue(getDisplayStartValue()) + " - " + formatScaleValue(getDisplayEndValue()), x + 55, y + 30, 120, 40);
 
         fill(trackColor);
-        rect(x, trackY, w, trackH, 5);
+        rect(trackX, y, trackW, h, 5);
 
         fill(selectedTrackColor);
-        rect(startX + handleW/2, trackY, (endX - startX), trackH, 5);
+        rect(trackX, upperY + handleH/2, trackW, (lowerY - upperY), 5);
 
         fill(handleColor);
-        rect(startX, y + h/2 - handleH/2, handleW, handleH, 6);
-        rect(endX, y + h/2 - handleH/2, handleW, handleH, 6);
+        rect(x + w/2 - handleW/2, lowerY, handleW, handleH, 6);
+        rect(x + w/2 - handleW/2, upperY, handleW, handleH, 6);
         noStroke();
+    }
+
+    float getStartHandleY() {
+        return y + h - handleH - startValue * (h - handleH);
+    }
+
+    float getEndHandleY() {
+        return y + h - handleH - endValue * (h - handleH);
     }
 
     float getDisplayStartValue() {
@@ -82,24 +89,16 @@ class RangeSlider extends Widget {
         return minDisplayValue + endValue * (maxDisplayValue - minDisplayValue);
     }
 
-    float getStartHandleX() {
-        return x + startValue * (w - handleW);
-    }
-
-    float getEndHandleX() {
-        return x + endValue * (w - handleW);
-    }
-
     boolean overStartHandle() {
-        float hx = getStartHandleX();
-        float hy = y + h/2 - handleH/2;
+        float hx = x + w/2 - handleW/2;
+        float hy = getStartHandleY();
         return mouseX >= hx && mouseX <= hx + handleW &&
                mouseY >= hy && mouseY <= hy + handleH;
     }
 
     boolean overEndHandle() {
-        float hx = getEndHandleX();
-        float hy = y + h/2 - handleH/2;
+        float hx = x + w/2 - handleW/2;
+        float hy = getEndHandleY();
         return mouseX >= hx && mouseX <= hx + handleW &&
                mouseY >= hy && mouseY <= hy + handleH;
     }
@@ -122,7 +121,7 @@ class RangeSlider extends Widget {
     }
 
     void drag() {
-        float raw = (mouseX - x) / (w - handleW);
+        float raw = 1.0 - ((mouseY - y) / (h - handleH));
         raw = constrain(raw, 0, 1);
 
         if (draggingStart) {
@@ -134,17 +133,5 @@ class RangeSlider extends Widget {
             endValue = max(raw, startValue + 0.01);
             endValue = constrain(endValue, 0, 1);
         }
-    }
-
-    int getStartIndex(int totalSize) {
-        if (totalSize <= 0) return 0;
-        return constrain(floor(startValue * totalSize), 0, max(totalSize - 1, 0));
-    }
-
-    int getEndIndexExclusive(int totalSize) {
-        if (totalSize <= 0) return 0;
-        int endIndex = ceil(endValue * totalSize);
-        endIndex = constrain(endIndex, 1, totalSize);
-        return max(endIndex, getStartIndex(totalSize) + 1);
     }
 }

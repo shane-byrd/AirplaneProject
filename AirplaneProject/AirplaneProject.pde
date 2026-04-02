@@ -270,16 +270,26 @@ void draw()
     }
 
     visualiseSelect.draw();
+
+    if (currentScreen == graphShowScreen) { // scatter plot
+        drawScatterPlotScaleControls(currentScreen);
+    }
+    if (currentScreen == histogramShowScreen) { // scatter plot
+        drawHistogramScaleControls(currentScreen);
+    }
+    if (currentScreen == barChartShowScreen) {
+        drawBarChartScaleControls(currentScreen);
+    }
     if (errorMessageActive) {
         currentError.draw();
     }
+
 
 }
 
 
 void keyPressed() {
     if (!errorMessageActive) {
-
         if (OnTableScreen && searchActive) {
             handleTextInputForSearch();
             return;
@@ -436,6 +446,7 @@ void mouseDragged() {
                 clampScroll();
             }
         }
+
     }
 
 }
@@ -444,4 +455,17 @@ void mouseDragged() {
 void mouseMoved() {
     currentScreen.updateHighlights();
     handleDropDownHighlight(visualiseSelect);
+}
+
+void updateGraphLoadButton() {
+    if (currentScreen == filterDataScreen) {
+        if (ifFilterActive()) {
+            filterDataScreen.buttonMap.get("addFilter").active = true;
+        }
+    }
+    if (currentScreen == graphCreateScreen) {
+        if (isLoadGraphActive()) {
+            graphCreateScreen.buttonMap.get("loadGraph").active = true;
+        }
+    }
 }

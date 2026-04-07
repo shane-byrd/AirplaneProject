@@ -1,3 +1,6 @@
+// miscellaneous helper functions
+// written by Shane Byrd
+
 int safeInt(String s) {
     if (s == null || s.equals("")) {
         return 0;
@@ -26,6 +29,7 @@ String convertBoolToString(boolean value) {
 
 }
 
+// creates a map between a string array and integer array
 HashMap StringToIntegerMap(String[] keys, Integer[] values) {
     int keysSize = keys.length;
     int valuesSize = values.length;
@@ -45,81 +49,22 @@ HashMap StringToIntegerMap(String[] keys, Integer[] values) {
 }
 
 void clampScroll() {
-        if (XOFFSET > MAXXOFFSET ) {
-                XOFFSET = MAXXOFFSET;
-        }
-        if (XOFFSET < MINXOFFSET) {
-                XOFFSET = MINXOFFSET;
-        }
-        if (YOFFSET >MAXYOFFSET ) {
-                YOFFSET = MAXYOFFSET;
-        }
-        if (YOFFSET < MINYOFFSET) {
-                YOFFSET = MINYOFFSET;
-        }
+    if (XOFFSET > MAXXOFFSET ) {
+            XOFFSET = MAXXOFFSET;
+    }
+    if (XOFFSET < MINXOFFSET) {
+            XOFFSET = MINXOFFSET;
+    }
+    if (YOFFSET >MAXYOFFSET ) {
+            YOFFSET = MAXYOFFSET;
+    }
+    if (YOFFSET < MINYOFFSET) {
+            YOFFSET = MINYOFFSET;
+    }
 }
 
-/*
-if (c == 0) { // date
-        outputText = flights.get(r-1).getDateRegular();
-}
-else if (c == 1) { // airline
-        outputText = flights.get(r-1).airlineCode;
-}
-else if (c == 2) { // flight number
-        outputText = String.valueOf(flights.get(r-1).flightNumber);
-}
-else if (c == 3) { // origin airport
-        outputText = flights.get(r-1).originAirport;
-}
-else if (c == 4) { // Origin City
-        outputText = flights.get(r-1).originCity;
-}
-else if (c == 5) { // Origin State
-        outputText = flights.get(r-1).originState;
-}
-else if (c == 6) { // Origin WAC
-        outputText = String.valueOf(flights.get(r-1).originWac);
-}
-
-else if (c == 7) { // destination airport
-        outputText = flights.get(r-1).destAirport;
-}
-else if (c == 8) { // Destination City
-        outputText = flights.get(r-1).destCity;
-}
-else if (c == 9) { // Origin State
-        outputText = flights.get(r-1).destState;
-}
-else if (c == 10) { // Origin WAC
-        outputText = String.valueOf(flights.get(r-1).destWac);
-}
-else if (c == 11) { // scheduled departutre time
-        outputText = convertTime24(flights.get(r-1).scheduledDepTime);
-}
-else if (c == 12) { // actual departutre time
-        outputText = convertTime24(flights.get(r-1).depTime);
-}
-else if (c == 13) { // scheduled arrival time
-        outputText = convertTime24(flights.get(r-1).scheduledArrTime);
-}
-else if (c == 14) { // actual arrival time
-        outputText = convertTime24(flights.get(r-1).arrTime);
-}
-else if (c == 15) { // Cancelled
-        outputText = convertBoolToString(flights.get(r-1).cancelled);
-}
-else if (c == 16) { // Diverted
-        outputText = convertBoolToString(flights.get(r-1).diverted);
-}
-else if (c == 17) {
-        outputText = String.valueOf(flights.get(r-1).distance);
-}
-else {
-        outputText = "n";
-}
-*/
-
+// finds the closest integer multiple of a power of a ten 
+// that divides an arbitrary range into as close to ten sections as possible
 float bestDivider(float low, float high) {
     float div = (high-low) / 10.0;
     float rounded = (float) Math.pow(10, Math.round(Math.log10(div)));
@@ -136,6 +81,8 @@ float bestDivider(float low, float high) {
 
 }
 
+// finds best bin width to divide a range based on a desired amount of bins
+// whilst not having excessive decimal places
 float bestBinWidth(float low, float high, float binAmount) {
     float div = (high-low) / binAmount;
     float rounded = (float) Math.pow(10, Math.round(Math.log10(div)));
@@ -169,6 +116,7 @@ int hhmmToMinConvert(int hhmm) {
     return onlyMinutes;
 }
 
+// uses recursive logic to handle drop down logic
 String[] handleDropDownArray(DropDown dd) {
     String[] returnLabel = {"None","None"};
     if (dd.openW == true) {
@@ -185,7 +133,11 @@ String[] handleDropDownArray(DropDown dd) {
             String[] newString = handleInteriorDropDownArray(idd);
             if (!newString[0].equals("None")) {
                 returnLabel = newString.clone();
+                for (InteriorDropDown iddn : dd.sIDD) {
+                    if (iddn != idd) closeAll(iddn);
+                }
             }
+
         }
         if (returnLabel[0].equals( "None" ) && dd.overBackGround() == false) {
             dd.openW = false;
@@ -206,6 +158,7 @@ String[] handleDropDownArray(DropDown dd) {
 
 }
 
+// uses similar recursive logic for interior drop down menus
 String[] handleInteriorDropDownArray(InteriorDropDown idd) {
     String[] returnLabel = {"None","None"};
     if (idd.openW == true) {  
@@ -250,6 +203,7 @@ boolean isInteger(String str) {
     }
 }
 
+// sets the correct button in the drop down menu to be in pressed state
 void handleDropDownMousePress(DropDown dd) {
     if (dd.openW == true) {
         for (Button b : dd.selectionButtons) {
@@ -292,7 +246,7 @@ void handleInteriorDropDownMousePress(InteriorDropDown idd) {
     }
 }
 
-
+// handles highlight for a dropdown
 void handleDropDownHighlight(DropDown dd) {
     if (dd.openW == true) {
         for (Button b : dd.selectionButtons) {
@@ -318,6 +272,7 @@ void handleInteriorDropDownHighlight(InteriorDropDown idd) {
     idd.mouseOver = idd.cursorOverWidget();
 }
 
+// handles when a mouse is released for a drop down
 void handleDropDownReleased(DropDown dd) {
     if (dd.openW == true) {
         for (Button b : dd.selectionButtons) {
@@ -359,6 +314,8 @@ int getShowAmount(boolean[] whichValues) {
     }
     return sum;
 }
+
+
 void updateScreenHorizontalScrollLimit() {
     MAXXOFFSET = max(getShowAmount(whichValues) * 120 - SCREENX,0);
 

@@ -1,3 +1,5 @@
+// Class for drop down button, written by Shane Byrd 
+//
 class DropDown extends Widget
 {
     boolean openW;

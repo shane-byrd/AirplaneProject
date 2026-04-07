@@ -1,3 +1,5 @@
+// class for drawing a non 3d and non interactable box that stores text
+// written By Shane Byrd
 class TextStore extends Widget
 {
     String textLabel;

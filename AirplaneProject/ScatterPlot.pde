@@ -1,4 +1,5 @@
-
+// graph to present data points, written by Shane Byrd
+//
 class ScatterPlot extends Graph {
     float pointRadius;
     color dataColor;
@@ -32,32 +33,6 @@ class ScatterPlot extends Graph {
         textAlign(RIGHT, TOP);
         text(xLabel, x + w + (w* backspace)-10, y + h+30);
 
-        ellipseMode(CENTER);
-        if (xData.size() == yData.size()) {
-            noStroke();
-            for (int i = 0; i < xData.size(); i++) {
-                float xv = xData.get(i);
-                float yv = yData.get(i);
-                if (xv < xLow || xv > xHigh || yv < yLow || yv > yHigh) {
-                    continue;
-                }
-                fill(dataColor);
-                ellipse(x + w*((xv - xLow))/xSpan, y + h - h*((yv - yLow)/ySpan), pointRadius,pointRadius);
-            }
-            fill(0);
-            stroke(0);
-            line(x,y,x,y+h);
-            line(x,y+h, x+w,y+h);
-
-            textFont(dataFont);
-            textAlign(LEFT,TOP);
-            text(getCorrectFormat(xLow,scatterTypeX), x, y + h+10);
-            text(getCorrectFormat(xHigh,scatterTypeX), x+w, y+h+10);
-
-            //draw y axis labels
-            textAlign(RIGHT, TOP);
-            text(getCorrectFormat(yLow,scatterTypeY),x,y+h);
-            text(getCorrectFormat(yHigh,scatterTypeY),x,y);
 
             float xDiv = bestDivider(xLow, xHigh);
             int j = 1;
@@ -99,6 +74,50 @@ class ScatterPlot extends Graph {
                 }
                 j++;
             }
+        
+
+
+
+
+        ellipseMode(CENTER);
+        if (xData.size() == yData.size()) {
+            noStroke();
+            for (int i = 0; i < xData.size(); i++) {
+                float xv = xData.get(i);
+                float yv = yData.get(i);
+                if (xv < xLow || xv > xHigh || yv < yLow || yv > yHigh) {
+                    continue;
+                }
+                fill(dataColor);
+                ellipse(x + w*((xv - xLow))/xSpan, y + h - h*((yv - yLow)/ySpan), pointRadius,pointRadius);
+            }
+            fill(0);
+            stroke(0);
+            line(x,y,x,y+h);
+            line(x,y+h, x+w,y+h);
+
+            textFont(dataFont);
+            textAlign(LEFT,TOP);
+            text(getCorrectFormat(xLow,scatterTypeX), x, y + h+10);
+            text(getCorrectFormat(xHigh,scatterTypeX), x+w, y+h+10);
+
+            //draw y axis labels
+            textAlign(RIGHT, TOP);
+            text(getCorrectFormat(yLow,scatterTypeY),x,y+h);
+            text(getCorrectFormat(yHigh,scatterTypeY),x,y);
+
+
+        }
+    }
+    void updateMouse(float xLow, float xHigh, float yLow, float yHigh) {
+        if (mouseX > x && mouseX < x + w 
+        && mouseY > y && mouseY < y + h) {
+            float xVal = xLow + ((mouseX - x)/w) * (xHigh - xLow);
+            float yVal = yLow + ((h-(mouseY - y))/h) * (yHigh - yLow);
+            mouseGraphHolder.textLabel = "X-value: "+getCorrectFormat(xVal,scatterTypeX)+", Y-value: "+getCorrectFormat(yVal,scatterTypeY);
+        }
+        else {
+            mouseGraphHolder.textLabel = "X-value: , Y-value: ";
         }
     }
 }

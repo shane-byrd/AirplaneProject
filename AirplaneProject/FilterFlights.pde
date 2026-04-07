@@ -5,6 +5,7 @@
 //   ArrayList<Flight> filteredFlights;
 // In setup(), after reading flights, initialise with:
 //   filteredFlights = new ArrayList<Flight>(flights);
+// Written by Mingqi
 
 void resetFilteredFlights() {
     filteredFlights = new ArrayList<Flight>(flights);

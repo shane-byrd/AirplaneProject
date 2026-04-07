@@ -1,4 +1,4 @@
-// Xubo
+// (not used in final code) written by Xubo (Jasper)
 class BarGraph {
   float x;
   float y;

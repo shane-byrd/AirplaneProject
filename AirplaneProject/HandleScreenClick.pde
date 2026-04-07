@@ -1,34 +1,41 @@
+// code to respond to press on Screen, written by Shane Byrd
+//
 void homeScreenPress() {
-    homeScreen.rangeSlider.press();
-    String[] visualiseOption = handleDropDownArray(visualiseSelect);
-    if (visualiseOption[0] != "None" && visualiseOption[0] != "Opened") {
-        if (visualiseOption[0] == "vtable") {
-            OnHomeScreen = false;
-            OnTableScreen = true;
-            currentScreen = tableScreen;
-        }
-        if (visualiseOption[0] == "vgraph") {
-            OnHomeScreen = false;
-            OnGraphCreateScreen = true;
-            currentScreen = graphCreateScreen;
-        }
-    }
     String[] buttonPressed = homeScreen.getButtonPressed();
-    handleFilterPress(buttonPressed[0]);
+
+    // change screens depending on which button was pressed
+    if (buttonPressed[0].equals("tabView")) {
+        OnHomeScreen = false;
+        OnTableScreen = true;
+        currentScreen = tableScreen;
+        changeTableTable(currentScreen);
+        currentScreen.updateHighlights();
+    }
+    if (buttonPressed[0].equals("grView")) {
+        OnHomeScreen = false;
+        OnGraphCreateScreen = true;
+        currentScreen = graphCreateScreen;
+        currentScreen.updateHighlights();
+    }
+    if (buttonPressed[0].equals("filView")) {
+        OnHomeScreen = false;
+        OnFilterDataScreen = true;
+        currentScreen = filterDataScreen;
+        currentScreen.updateHighlights();
+    }
+    if (buttonPressed[0].equals("searchView")) {
+        OnHomeScreen = false;
+        OnSearchScreen = true;
+        currentScreen = searchScreen;
+        changeTableSearch(currentScreen);
+        currentScreen.updateHighlights();
+    }
 }
 
 
 void tableScreenPress() {
     String[] buttonPressed = tableScreen.getButtonPressed();
-    String[] visualiseOption = handleDropDownArray(visualiseSelect);
-    if (visualiseOption[0] != "None" && visualiseOption[0] != "Opened") {
-        if (visualiseOption[0] == "vgraph") {
-            OnTableScreen = false;
-            OnGraphCreateScreen = true;
-            currentScreen = graphCreateScreen;
-        }
-    }
-    handleFilterPress(buttonPressed[0]);
+    handleHomePress(buttonPressed[0]);
 
     if (!buttonPressed[0].equals("None") && !buttonPressed[0].equals("Opened")) {
         if (buttonPressed[0].length() > 3 && buttonPressed[0].substring(0,4).equals("show")) {
@@ -37,70 +44,42 @@ void tableScreenPress() {
             updateScreenHorizontalScrollLimit();
         }
         else if (buttonPressed[0].equals("prevPage")&& currentPage > 0) {
+            // move to previous page
             currentPage--;
             YOFFSET = 0;
             updateVerticalLimit();
 
         }
         else if (buttonPressed[0].equals("nextPage") && currentPage < totalPages - 1) {
+            // move to next page
             currentPage++;
             YOFFSET = 0;
             updateVerticalLimit();
         }
-        else if (buttonPressed[0].equals("searchOption")) {
-            if (!searchOpen) {
-                searchOpen = true;
-                tableScreen.dropDownMap.get("filterColumn").visible = false;
-                //tableScreen.buttonMap.get("clearButton").visible = true;
-                tableScreen.buttonMap.get("searchOption").textLabel = "Filters";
 
-            }
-            else {
-                searchOpen = false;
-                tableScreen.dropDownMap.get("filterColumn").visible = true;
-                //tableScreen.buttonMap.get("clearButton").visible = false;
-                tableScreen.buttonMap.get("searchOption").textLabel = "Search";
-
-            }
-
-
-
-
-        }
         else if (buttonPressed[0].equals("clearButton")) {
-                searchText = "";
-                selectedColumn = "All";
-                applyFilters();
+            // set all columns to visible
+            for (int i = 0; i < whichValues.length; i ++) {
+                whichValues[i] = true;
+            }
+            updateScreenHorizontalScrollLimit();
+        }
+        else if (buttonPressed[0].equals("removeButton")) {
+            // set all columns to invisible
+            for (int i = 0; i < whichValues.length; i ++) {
+                whichValues[i] = false;
+            }
+            updateScreenHorizontalScrollLimit();
+
         }
         else if (buttonPressed[0].length() > 7 && buttonPressed[0].substring(0,8).equals("sortData")) { 
+            // sort the flights
             sortFlights(buttonPressed[0]);
-                  currentPage = 0;
-                  YOFFSET = 0;
-                  updatePagination();
-                  updateVerticalLimit();
+            currentPage = 0;
+            YOFFSET = 0;
+            updatePagination();
+            updateVerticalLimit();
         }
-        else {
-            if (!searchOpen ) {
-                if (buttonPressed[0].equals("all")) selectedColumn = "All";
-                if (buttonPressed[0].equals("date")) selectedColumn = "Date";
-                if (buttonPressed[0].equals("airline")) selectedColumn = "Airline";
-                if (buttonPressed[0].equals("flightNumber")) selectedColumn = "Flight Number";
-                if (buttonPressed[0].equals("depAirport")) selectedColumn = "Dep. Airport";
-                if (buttonPressed[0].equals("depCity")) selectedColumn = "Dep. City";
-                if (buttonPressed[0].equals("depState")) selectedColumn = "Dep. State";
-                if (buttonPressed[0].equals("destAirport")) selectedColumn = "Dest. Airport";
-                if (buttonPressed[0].equals("destCity")) selectedColumn = "Dest. City";
-                if (buttonPressed[0].equals("destState")) selectedColumn = "Dest. State";
-                if (buttonPressed[0].equals("distance")) selectedColumn = "Distance";
-                if (buttonPressed[0].equals("depTime")) selectedColumn = "Dep Time";
-                if (buttonPressed[0].equals("arrTime")) selectedColumn = "Arr Time";
-                tableScreen.dropDownMap.get("filterColumn").textLabel = "Filter: " + selectedColumn;
-                applyFilters();
-            }
-        }
-
-        //this index of the drop down menu array for the table screen corresponds to the show menu
-        //tableScreen.ddMenus.get(0).colorController = whichValues;
     }
     if (tableScreen.vscroll.cursorOverWidget()) {
         tableScreen.vscroll.click = true;
@@ -112,18 +91,8 @@ void tableScreenPress() {
 
 
 void graphCreateScreenPress() {
-
-    String[] visualiseOption = handleDropDownArray(visualiseSelect);
-    if (!visualiseOption[0].equals("None") && !visualiseOption[0].equals("Opened")) {
-        if (visualiseOption[0].equals("vtable")) {
-            OnGraphCreateScreen = false;
-            OnTableScreen = true;
-            currentScreen = tableScreen;
-        }
-    }
-
     String[] buttonPressed = graphCreateScreen.getButtonPressed();
-    handleFilterPress(buttonPressed[0]);
+    handleHomePress(buttonPressed[0]);
     if (isLoadGraphActive()) {
         graphCreateScreen.buttonMap.get("loadGraph").active = true;
     }
@@ -131,6 +100,7 @@ void graphCreateScreenPress() {
         graphCreateScreen.buttonMap.get("loadGraph").active = false;
     }
     if (!buttonPressed[0].equals("None") && !buttonPressed[0].equals("Opened")) {
+        // reset most options depending on which of the first graph type drop down menu option is selected
         if (buttonPressed[0].equals("scOption")) {
             graphCreateScreen.textEditMap.get("histogramBin").visible = false;
             graphCreateScreen.textStoreMap.get("1dataH").visible = true;
@@ -245,44 +215,46 @@ void graphCreateScreenPress() {
             graphCreateScreen.textStoreMap.get("bcSortH").visible = false;
             graphCreateScreen.textStoreMap.get("bcSortH").textLabel = "";
         }
-        //
         if (buttonPressed[0].substring(0,3).equals("scx")) {
-
+            // set the text store 1 to the scatter plot x data
             graphCreateScreen.textStoreMap.get("1dataH").textLabel = buttonPressed[1];
         }
         if (buttonPressed[0].substring(0,3).equals("scy")) {
-
+            // set the text store 2 to the scatter plot y data
             graphCreateScreen.textStoreMap.get("2dataH").textLabel = buttonPressed[1];
         }
         if (buttonPressed[0].substring(0,4).equals("hsgd")) {
-
+            // set text store 1 to the histogram data
             graphCreateScreen.textStoreMap.get("1dataH").textLabel = buttonPressed[1];
         }
         if (buttonPressed[0].substring(0,3).equals("bcc")) {
             if (graphCreateScreen.textStoreMap.get("gTypeH").textLabel.equals("Bar Chart")) {
+                // set text store 1 to bar chart data if on bar chart
                 graphCreateScreen.textStoreMap.get("1dataH").textLabel = buttonPressed[1];
                 if (!graphCreateScreen.textStoreMap.get("1dataH").textLabel.equals("")
                     && !graphCreateScreen.textStoreMap.get("2dataH").textLabel.equals("")) {
+                        // set the other sort and number options to visible
                     graphCreateScreen.dropDownMap.get("bcNum").visible = true;
                     graphCreateScreen.dropDownMap.get("bcSort").visible = true;
                     graphCreateScreen.textStoreMap.get("bcNumH").visible = true;
-
                     graphCreateScreen.textStoreMap.get("bcSortH").visible = true;
 
 
                 }
             }
             else if (graphCreateScreen.textStoreMap.get("gTypeH").textLabel.equals("Pi Chart")) {
-                
+                // set text store 1 to pi chart data type if on pi chart option
                 graphCreateScreen.textStoreMap.get("1dataH").textLabel = buttonPressed[1];
             }
 
 
         }
         if (buttonPressed[0].length() > 5 && buttonPressed[0].substring(0,6).equals("bcSort")) {
+            // set the sort text store to sort number
             graphCreateScreen.textStoreMap.get("bcSortH").textLabel = buttonPressed[1];
         }
         if (buttonPressed[0].length() > 4 && buttonPressed[0].substring(0,5).equals("bcNum")) {
+            // set the number text store to number of bars
             graphCreateScreen.textStoreMap.get("bcNumH").textLabel = buttonPressed[1];
         }
         if (buttonPressed[0].substring(0,3).equals("bcd")) {
@@ -304,7 +276,7 @@ void graphCreateScreenPress() {
                     && !graphCreateScreen.textStoreMap.get("bcNumH").textLabel.equals("")
                     && !graphCreateScreen.textStoreMap.get("bcSortH").textLabel.equals("")) {
 
-                    // change screen and load bar chart with correct data
+                    // can load bar chart, set the bar chart global variables and call the load bar chart dat function
                     showNumBC = int(graphCreateScreen.textStoreMap.get("bcNumH").textLabel);
                     if (graphCreateScreen.textStoreMap.get("bcSortH").textLabel.equals("Ascending")) {
                         ascendingBC = true;
@@ -314,16 +286,19 @@ void graphCreateScreenPress() {
                     }
                     loadBarChartData(graphCreateScreen.textStoreMap.get("1dataH").textLabel, graphCreateScreen.textStoreMap.get("2dataH").textLabel);
                     
-
+                    // change screens
                     OnGraphCreateScreen = false;
                     OnbarChartShowScreen = true;
                     currentScreen = barChartShowScreen;
+                    currentScreen.updateHighlights();
                 }
                 if (graphCreateScreen.textStoreMap.get("gTypeH").textLabel.equals("Pi Chart")) {
+                    // call load pi chart data
                     loadPiChartData(graphCreateScreen.textStoreMap.get("1dataH").textLabel);
                     OnGraphCreateScreen = false;
                     OnPiChartShowScreen = true;
                     currentScreen = piChartShowScreen;
+                    currentScreen.updateHighlights();
 
                 }
 
@@ -333,6 +308,7 @@ void graphCreateScreenPress() {
                     OnGraphCreateScreen = false;
                     OnGraphShowScreen = true;
                     currentScreen = graphShowScreen;
+                    currentScreen.updateHighlights();
                 }
                 if (graphCreateScreen.textStoreMap.get("gTypeH").textLabel.equals("Histogram")) {
                     // change screen and load histogram with correct data
@@ -340,9 +316,13 @@ void graphCreateScreenPress() {
                     OnGraphCreateScreen = false;
                     OnHistogramShowScreen = true;
                     currentScreen = histogramShowScreen;
+                    currentScreen.updateHighlights();
                 }
 
             }
+        }
+        if (isLoadGraphActive()) {
+        graphCreateScreen.buttonMap.get("loadGraph").active = true;
         }
     }
     
@@ -350,70 +330,34 @@ void graphCreateScreenPress() {
 
 
 void graphShowScreenPress() {
-    String[] visualiseOption = handleDropDownArray(visualiseSelect);
-    if (visualiseOption[0] != "None" && visualiseOption[0] != "Opened") {
-        if (visualiseOption[0] == "vtable") {
-            OnGraphShowScreen = false;
-            OnTableScreen = true;
-            currentScreen = tableScreen;
-        }
-        if (visualiseOption[0] == "vgraph") {
-            OnGraphShowScreen = false;
-            OnGraphCreateScreen = true;
-            currentScreen = graphCreateScreen;
-        }
-    }
     String[] buttonPressed = graphShowScreen.getButtonPressed();
-    handleFilterPress(buttonPressed[0]);
+    handleHomePress(buttonPressed[0]);
     if (!buttonPressed[0].equals("None") && !buttonPressed[0].equals("Opened")) {
         if (buttonPressed[0].equals("backW")) {
             OnGraphShowScreen = false;
             OnGraphCreateScreen = true;
             currentScreen = graphCreateScreen;
+            currentScreen.updateHighlights();
         }
     }
 }
 
 void barChartShowScreenPress() {
-    String[] visualiseOption = handleDropDownArray(visualiseSelect);
-    if (visualiseOption[0] != "None" && visualiseOption[0] != "Opened") {
-        if (visualiseOption[0] == "vtable") {
-            OnbarChartShowScreen = false;
-            OnTableScreen = true;
-            currentScreen = tableScreen;
-        }
-        if (visualiseOption[0] == "vgraph") {
-            OnbarChartShowScreen = false;
-            OnGraphCreateScreen = true;
-            currentScreen = graphCreateScreen;
-        }
-    }
     String[] buttonPressed = barChartShowScreen.getButtonPressed();
-    handleFilterPress(buttonPressed[0]);
+    handleHomePress(buttonPressed[0]);
     if (!buttonPressed[0].equals("None") && !buttonPressed[0].equals("Opened")) {
         if (buttonPressed[0].equals("backW")) {
             OnbarChartShowScreen = false;
             OnGraphCreateScreen = true;
             currentScreen = graphCreateScreen;
+            currentScreen.updateHighlights();
         }
     }
 }
 
 void filterDataScreenPress() {
-    String[] visualiseOption = handleDropDownArray(visualiseSelect);
-    if (visualiseOption[0] != "None" && visualiseOption[0] != "Opened") {
-        if (visualiseOption[0] == "vtable") {
-            OnFilterDataScreen = false;
-            OnTableScreen = true;
-            currentScreen = tableScreen;
-        }
-        if (visualiseOption[0] == "vgraph") {
-            OnFilterDataScreen = false;
-            OnGraphCreateScreen = true;
-            currentScreen = graphCreateScreen;
-        }
-    }
     String[] buttonPressed = filterDataScreen.getButtonPressed();
+    handleHomePress(buttonPressed[0]);
     if (ifFilterActive()) {
         filterDataScreen.buttonMap.get("addFilter").active = true;
     }
@@ -454,7 +398,6 @@ void filterDataScreenPress() {
 
             }
             else {
-                //filterDataScreen.textBoxMap.get("InfoSmallOne").textLabel = "Insert Info Here: ";
                 filterDataScreen.textEditMap.get("valueFirstHolder").visible = true;
                 setFilterText1("Insert Info: ");
             }
@@ -465,7 +408,6 @@ void filterDataScreenPress() {
             filterDataScreen.textStoreMap.get("1TypeH").textLabel = buttonPressed[1];
             filterDataScreen.dropDownMap.get("typeNumFilter").visible = true;
             filterDataScreen.textStoreMap.get("2TypeH").visible = true;
-            // set all the next values to empty or invisible;
             filterDataScreen.textStoreMap.get("2TypeH").textLabel = "";
             filterDataScreen.textEditMap.get("valueFirstHolder").visible = false;
             filterDataScreen.textEditMap.get("valueSecondHolder").visible = false;
@@ -493,29 +435,22 @@ void filterDataScreenPress() {
             if (filterDataScreen.textStoreMap.get("1TypeH").textLabel.equals("Date")) {
                 filterDataScreen.textBoxMap.get("InfoNum").textLabel = "In format DD/MM/YYYY: ";
             }
-            //filterDataScreen.textStoreMap.get("1valH").visible = true;
             filterDataScreen.textEditMap.get("valueFirstHolder").visible = true;
             filterDataScreen.textBoxMap.get("InfoSmallOne").textLabel = "";
             filterDataScreen.textBoxMap.get("InfoSmallTwo").textLabel = "";
             if (buttonPressed[0].equals("nFilTsingleVal")) {
-                //filterDataScreen.textBoxMap.get("InfoSmallOne").textLabel = "Equals: ";
                 setFilterText1("Equals: ");
             }
             if (buttonPressed[0].equals("nFilTgreater")) {
-                //filterDataScreen.textBoxMap.get("InfoSmallOne").textLabel = "Greater Than: ";
                 setFilterText1("Greater Than: ");
             }
             if (buttonPressed[0].equals("nFilTlesser")) {
-                //filterDataScreen.textBoxMap.get("InfoSmallOne").textLabel = "Less Than: ";
                 setFilterText1("Less Than: ");
             }
             if (buttonPressed[0].equals("nFilTrange")) {
-                //filterDataScreen.buttonMap.get("valueScndHolder").visible = true;
                 filterDataScreen.textEditMap.get("valueSecondHolder").visible = true;
                 setFilterText1("Greater Than: ");
                 setFilterText2("Less Than: ");
-                //filterDataScreen.textBoxMap.get("InfoSmallTwo").textLabel = "Greater Than: ";
-                //filterDataScreen.textBoxMap.get("InfoSmallOne").textLabel = "Less Than: ";
             }
             else {
                 filterDataScreen.textEditMap.get("valueSecondHolder").visible = false;
@@ -539,7 +474,6 @@ void filterDataScreenPress() {
                     }
                 }
                 else {
-                    //if (!filterDataScreen.textBoxMap.get("InfoSmallOne").textLabel.equals("")) {
                         filterDataNonNumerical(filterDataScreen.textStoreMap.get("1TypeH").textLabel, filterDataScreen.textEditMap.get("valueFirstHolder").textLabel);
                         if (errorMessageActive) {
                             clearAllFilterOptions();
@@ -601,6 +535,9 @@ void filterDataScreenPress() {
             filterDataScreen.buttonMap.get("addFilter").active = false;
 
         }
+        if (ifFilterActive()) {
+        filterDataScreen.buttonMap.get("addFilter").active = true;
+        }
     }
 }
 
@@ -624,40 +561,33 @@ void clearAllFilterOptions() {
     setFilterText2("");
 }
 
-void handleFilterPress(String buttonPressed) {
-    if (buttonPressed.equals("filterChange")) {
-        OnHomeScreen = false;
+
+
+void handleHomePress(String buttonPressed) {
+    if (buttonPressed.equals("homeB")) {
+        OnHomeScreen = true;
         OnTableScreen = false;
         OnGraphCreateScreen = false;
         OnGraphShowScreen = false;
         OnbarChartShowScreen = false;
         OnBarGraphShowScreen = false;
-        OnFilterDataScreen = true;
-        currentScreen = filterDataScreen;
+        OnHistogramShowScreen = false;
+        OnFilterDataScreen = false;
+        OnSearchScreen = false;
+        currentScreen = homeScreen;
+        currentScreen.updateHighlights();
     }
 }
 
 void histogramShowScreenPress() {
-    String[] visualiseOption = handleDropDownArray(visualiseSelect);
-    if (visualiseOption[0] != "None" && visualiseOption[0] != "Opened") {
-        if (visualiseOption[0] == "vtable") {
-            OnHistogramShowScreen = false;
-            OnTableScreen = true;
-            currentScreen = tableScreen;
-        }
-        if (visualiseOption[0] == "vgraph") {
-            OnHistogramShowScreen = false;
-            OnGraphCreateScreen = true;
-            currentScreen = graphCreateScreen;
-        }
-    }
     String[] buttonPressed = histogramShowScreen.getButtonPressed();
-    handleFilterPress(buttonPressed[0]);
+    handleHomePress(buttonPressed[0]);
     if (!buttonPressed[0].equals("None") && !buttonPressed[0].equals("Opened")) {
         if (buttonPressed[0].equals("backW")) {
             OnHistogramShowScreen = false;
             OnGraphCreateScreen = true;
             currentScreen = graphCreateScreen;
+            currentScreen.updateHighlights();
         }
     }
 
@@ -735,26 +665,67 @@ boolean isLoadGraphActive() {
 }
 
 void piChartShowScreenPress() {
-    String[] visualiseOption = handleDropDownArray(visualiseSelect);
-    if (visualiseOption[0] != "None" && visualiseOption[0] != "Opened") {
-        if (visualiseOption[0] == "vtable") {
-            OnPiChartShowScreen = false;
-            OnTableScreen = true;
-            currentScreen = tableScreen;
-        }
-        if (visualiseOption[0] == "vgraph") {
-            OnPiChartShowScreen = false;
-            OnGraphCreateScreen = true;
-            currentScreen = graphCreateScreen;
-        }
-    }
     String[] buttonPressed = piChartShowScreen.getButtonPressed();
-    handleFilterPress(buttonPressed[0]);
+    handleHomePress(buttonPressed[0]);
     if (!buttonPressed[0].equals("None") && !buttonPressed[0].equals("Opened")) {
         if (buttonPressed[0].equals("backW")) {
             OnPiChartShowScreen = false;
             OnGraphCreateScreen = true;
             currentScreen = graphCreateScreen;
+            currentScreen.updateHighlights();
         }
     }   
+}
+
+
+void changeTableTable(Screen s) {
+    s.table.backgroundColor = color(#D4FCE4);
+    s.table.cellColor =  color(#9AD6B1);
+    s.table.titleColor = color(#2B9453);
+}
+
+void changeTableSearch(Screen s) {
+    s.table.backgroundColor = color(#c5edfa);
+    s.table.cellColor =  color(#a2d0fa);
+    s.table.titleColor = color(#4ea4f5);
+}
+
+void searchScreenPress() {
+    String[] buttonPressed = searchScreen.getButtonPressed();
+    handleHomePress(buttonPressed[0]);
+    if (!buttonPressed[0].equals("None") && !buttonPressed[0].equals("Open") ) {
+        if (buttonPressed[0].equals("clearButton")) {
+                searchText = "";
+                selectedColumn = "All";
+                searchApplied = false;
+                searchScreen.textEditMap.get("minDist").textLabel="";
+                searchScreen.textEditMap.get("maxDist").textLabel="";
+                searchScreen.textEditMap.get("endTime").textLabel="";
+                searchScreen.textEditMap.get("startTime").textLabel="";
+
+                applyFilters();
+
+
+        }
+        else {
+            if (buttonPressed[0].equals("all")) selectedColumn = "All";
+            if (buttonPressed[0].equals("date")) selectedColumn = "Date";
+            if (buttonPressed[0].equals("airline")) selectedColumn = "Airline";
+            if (buttonPressed[0].equals("flightNumber")) selectedColumn = "Flight Number";
+            if (buttonPressed[0].equals("depAirport")) selectedColumn = "Dep. Airport";
+            if (buttonPressed[0].equals("depCity")) selectedColumn = "Dep. City";
+            if (buttonPressed[0].equals("depState")) selectedColumn = "Dep. State";
+            if (buttonPressed[0].equals("destAirport")) selectedColumn = "Dest. Airport";
+            if (buttonPressed[0].equals("destCity")) selectedColumn = "Dest. City";
+            if (buttonPressed[0].equals("destState")) selectedColumn = "Dest. State";
+            if (buttonPressed[0].equals("distance")) selectedColumn = "Distance";
+            if (buttonPressed[0].equals("depTime")) selectedColumn = "Dep Time";
+            if (buttonPressed[0].equals("arrTime")) selectedColumn = "Arr Time";
+            searchScreen.dropDownMap.get("filterColumn").textLabel = "Filter: " + selectedColumn;
+            applyFilters();
+        }
+
+    }
+
+
 }

@@ -1,4 +1,4 @@
-
+// functions to split table screen into screens, written by Tommy (Zhihan)
 void drawPageInfo() {
   
   textFont(smallFont);

@@ -1,3 +1,5 @@
+// class for horizontal scroll bar written by Shane Byrd
+//
 class HorizontalScrollBar extends Widget
 {
     color buttonColor;

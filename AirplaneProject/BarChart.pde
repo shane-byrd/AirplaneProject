@@ -1,4 +1,4 @@
-
+// class for bar chart to represent categorical data, written by Shane Byrd
 class BarChart extends Graph {
     color dataColor;
     float gapX;
@@ -10,6 +10,7 @@ class BarChart extends Graph {
     }
 
     void draw() {
+
         float extraspace = 1.2;
         float backspace = 0.1;
         float ySpan = safeAxisSpan(minBCval, maxBCval);
@@ -29,11 +30,16 @@ class BarChart extends Graph {
         textAlign(LEFT, TOP);
         text(yLabelBC, x - (w* backspace), y-20);
 
+        // draw horizontal gridlines
         fill(0);
         float yDiv = bestDivider(minBCval, maxBCval);
         textAlign(RIGHT,BOTTOM);
         float j = 0;
+        boolean decimalShow = false;
         if (yDiv > 0.0) {
+            if (yDiv < 1.0f) {
+                decimalShow = true;
+            }
         while (true) {
             float yVal = minBCval + yDiv * j;
             if (yVal > maxBCval) {
@@ -45,7 +51,13 @@ class BarChart extends Graph {
                 line(x, yLoc, x+w, yLoc);
                 stroke(0);
                 line(x, yLoc, x-10, yLoc);
-                text(String.format("%.0f", yVal), x, yLoc);
+                if (decimalShow) {
+                    text(String.format("%.2f", yVal), x, yLoc);
+                }
+                else {
+                    text(String.format("%.0f", yVal), x, yLoc);
+                }
+                
             }
             j++;
         }
@@ -71,6 +83,8 @@ class BarChart extends Graph {
         float width = (w / visibleCount) - gapX;
 
         int localIndex = 0;
+
+        // draw bars
         for (int i = startIndex; i < endIndex; i++) {
             Map.Entry<String, Float> entry = showBCdata.get(i);
             float val = constrain(entry.getValue(), minBCval, maxBCval);
@@ -89,4 +103,18 @@ class BarChart extends Graph {
         line(x,y,x,y+h);
         line(x,y+h, x+w,y+h);
     }
+
+    void updateMouse() {
+        //update the mouse label
+        if (mouseX > x && mouseX < x + w 
+        && mouseY > y && mouseY < y + h) {
+            //float xVal = minBCval + ((mouseX - x)/w) * (xHigh - xLow);
+            float yVal = minBCval + ((h-(mouseY - y))/h) * (maxBCval - minBCval);
+            mouseGraphHolder.textLabel = "Y-value: "+getCorrectFormat(yVal,"");
+        }
+        else {
+            mouseGraphHolder.textLabel = "Y-value: ";
+        }
+    }
+
 }

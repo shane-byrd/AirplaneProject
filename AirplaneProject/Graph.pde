@@ -1,3 +1,4 @@
+// abstract class for scatterplot, histogram and bar chart, written by Shane Byrd
 abstract class Graph
 {
     float x,y,w,h;

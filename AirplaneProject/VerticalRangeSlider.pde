@@ -1,4 +1,5 @@
-
+// class for a vertical range slideer (two buttons on a vertical track)
+// written by Mingqi
 class VerticalRangeSlider extends Widget {
     float handleW;
     float handleH;
@@ -19,6 +20,8 @@ class VerticalRangeSlider extends Widget {
     String displayLabel;
     float minDisplayValue;
     float maxDisplayValue;
+
+    String type;
 
     VerticalRangeSlider(
         float x, float y, float w, float h,
@@ -56,10 +59,13 @@ class VerticalRangeSlider extends Widget {
         float lowerY = getStartHandleY();
         float upperY = getEndHandleY();
 
+        fill(#bfbfbf);
+        rect(x-120,y+h + 20,160,20,6);
+
         fill(textColor);
         textFont(sliderFont);
         textAlign(LEFT, TOP);
-        text(displayLabel + ": " + formatScaleValue(getDisplayStartValue()) + " - " + formatScaleValue(getDisplayEndValue()), x + 55, y + 30, 120, 40);
+        text(displayLabel + ": " + formatScaleValue(getDisplayStartValue(), type) + " - " + formatScaleValue(getDisplayEndValue(), type), x-120 + 4,y+h+20 + 4);
 
         fill(trackColor);
         rect(trackX, y, trackW, h, 5);

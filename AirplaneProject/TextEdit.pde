@@ -1,3 +1,5 @@
+// class for a text input field where you can enter text
+// written by Shane Byrd
 class TextEdit extends Widget
 {
     String textLabel;
@@ -20,6 +22,8 @@ class TextEdit extends Widget
         this.maxLength = maxLength;
         this.defaultText = defaultText;
     }
+
+
 /*
 void drawSearchBox() {
   stroke(0);

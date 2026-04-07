@@ -1,4 +1,5 @@
-
+// code for displaying a frequency graph, written by Shane Byrd
+//
 class Histogram extends Graph {
     color dataColor;
 
@@ -100,5 +101,16 @@ class Histogram extends Graph {
         text(getCorrectFormat(lowest, hsType), x, y+h+30);
         textAlign(RIGHT,TOP);
         text(getCorrectFormat(highest, hsType), x+w-70, y+h+30);
+    }
+    void updateMouse(float lowest, float highest, float lowestFrequency, float highestFrequency) {
+        if (mouseX > x && mouseX < x + w 
+        && mouseY > y && mouseY < y + h) {
+            float xVal = lowest + ((mouseX - x)/w) * (highest - lowest);
+            float yVal = lowestFrequency + ((h-(mouseY - y))/h) * (highestFrequency - lowestFrequency);
+            mouseGraphHolder.textLabel = "X-value: "+getCorrectFormat(xVal,hsType)+", Y-value: "+getCorrectFormat(yVal,hsType);
+        }
+        else {
+            mouseGraphHolder.textLabel = "X-value: , Y-value: ";
+        }
     }
 }

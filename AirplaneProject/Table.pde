@@ -1,3 +1,5 @@
+// class to draw a table 
+// written By Shane Byrd
 class Table {
     float x,y,rows,cols,cellW,cellH,gapX,gapY;
     color backgroundColor, cellColor, titleColor;
@@ -52,7 +54,7 @@ class Table {
         float nh = (cellH * drawRows) + (drawRows + 1) * gapY;
 //
         fill(backgroundColor);
-        rect(x-XOFFSET,y-YOFFSET,nw,h);
+        rect(x-XOFFSET,y-YOFFSET,nw,nh);
         // draw individual cells
         for (int r = 0; r < int(drawRows); r++) {
             for (int c = 0; c < int(cols); c++) {

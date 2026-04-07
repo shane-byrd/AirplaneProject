@@ -1,3 +1,5 @@
+// generic class for a screen element (button, dropdown, text field, scroll bar, range slider, etc)
+// written by Shane Byrd
 abstract class Widget
 {
     float x, y, w, h;

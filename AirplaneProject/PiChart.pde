@@ -1,3 +1,5 @@
+// represents the proportions of a data type (eg airlines) using Pi Chart
+//
 class PiChart extends Graph {
     color dataColor;
     float r;

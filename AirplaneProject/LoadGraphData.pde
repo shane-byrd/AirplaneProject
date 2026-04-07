@@ -1,4 +1,6 @@
-
+// functions to load graph data, (title, x and y label, data points, etc) with appropriate data when the load graph 
+// button is pressed, written By Shane Byrd
+//
 void loadScatterPlotData(String xlabel, String ylabel) {
     String type = "";
     if (xlabel.equals("Distance")) {
@@ -7,17 +9,17 @@ void loadScatterPlotData(String xlabel, String ylabel) {
     }
     if (xlabel.equals("Departure Delay")) {
         scatterPlotXData = getDepartureDelay(filteredFlights);
-        spXlabel = "Departure Delay Time (minutes)";
+        spXlabel = "Departure Delay Time (hours:minutes)";
         type="timeScatter";
     }
     if (xlabel.equals("Arrival Delay")) {
         scatterPlotXData = getArrivalDelay(filteredFlights);
-        spXlabel = "Arrival Delay Time (minutes)";
+        spXlabel = "Arrival Delay Time (hours:minutes)";
         type="timeScatter";
     }
     if (xlabel.equals("Duration")) {
         scatterPlotXData = getDuration(filteredFlights);
-        spXlabel = "Duration (minutes)";
+        spXlabel = "Duration (hours:minutes)";
         type="timeScatter";
     }
     if (xlabel.equals("Time (year)")) {
@@ -55,17 +57,17 @@ void loadScatterPlotData(String xlabel, String ylabel) {
     }
     if (ylabel.equals("Departure Delay")) {
         scatterPlotYData = getDepartureDelay(filteredFlights);
-        spYlabel = "Departure Delay Time (minutes)";
+        spYlabel = "Departure Delay Time (hours:minutes)";
         type="timeScatter";
     }
     if (ylabel.equals("Arrival Delay")) {
         scatterPlotYData = getArrivalDelay(filteredFlights);
-        spYlabel = "Arrival Delay Time (minutes)";
+        spYlabel = "Arrival Delay Time (hours:minutes)";
         type="timeScatter";
     }
     if (ylabel.equals("Duration")) {
         scatterPlotYData = getDuration(filteredFlights);
-        spYlabel = "Duration (minutes)";
+        spYlabel = "Duration (hours:minutes)";
         type="timeScatter";
     }
     if (ylabel.equals("Time (year)")) {
@@ -137,7 +139,7 @@ void loadBarChartData(String category, String data) {
     barChartVisibleStartIndex = 0;
     barChartVisibleEndIndexExclusive = showBCdata.size();
 
-    titleBC = data +" for " + category + " bar chart";
+    titleBC = data +" for " + category + " Bar Chart";
     yLabelBC = data;
 
     resetBarChartScaleControls();

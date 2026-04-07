@@ -1,3 +1,5 @@
+// class for a verticall scroll bar
+// written by Shane Byrd
 class VerticalScrollBar extends Widget
 {
     color buttonColor;

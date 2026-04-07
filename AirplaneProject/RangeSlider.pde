@@ -1,4 +1,5 @@
-
+// class to slide 2 buttons along a track
+// written by Mingqi
 class RangeSlider extends Widget {
     float handleW;
     float handleH;
@@ -19,6 +20,7 @@ class RangeSlider extends Widget {
     String displayLabel;
     float minDisplayValue;
     float maxDisplayValue;
+    String type;
 
     RangeSlider(
         float x, float y, float w, float h,
@@ -56,11 +58,14 @@ class RangeSlider extends Widget {
 
         float startX = getStartHandleX();
         float endX = getEndHandleX();
-
+        
+        fill(#bfbfbf);
+        rect(x-25,y+45,160,20,6);
         fill(textColor);
         textFont(sliderFont);
-        textAlign(LEFT, CENTER);
-        text(displayLabel + ": " + formatScaleValue(getDisplayStartValue()) + " - " + formatScaleValue(getDisplayEndValue()), x+60, y-5 );
+        textAlign(LEFT, TOP);
+        
+        text(displayLabel + ": " + formatScaleValue(getDisplayStartValue(),type) + " - " + formatScaleValue(getDisplayEndValue(),type), x+4-25,y+45+4 );
 
         fill(trackColor);
         rect(x, trackY, w, trackH, 5);

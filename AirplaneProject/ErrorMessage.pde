@@ -1,10 +1,12 @@
+// class for displaying an error message, written by Shane Byrd
+//
 class ErrorMessage extends Widget
 {
     String textLabel;
     String titleText;
     PFont textFont;
     PFont titleFont;
-    float cross;;
+    float cross;
     ErrorMessage(float x, float y, float w, float h, String idLabel, String textLabel, String titleText, PFont textFont, PFont titleFont, float cross)
     {
         super(x,y,w,h,idLabel);
@@ -12,7 +14,7 @@ class ErrorMessage extends Widget
         this.textLabel = textLabel;
         this.textFont = textFont;
         this.titleFont = titleFont;
-        this.cross = cross;;
+        this.cross = cross;
     }
 
     // for drawing only with primary color

@@ -1,3 +1,4 @@
+// functions for converting data into representable format, written by Shane Byrd
 int convertDDMMYYYYtoint(String formatString) {
     //check if correct
     String[] dateArray = formatString.split("/");
@@ -12,9 +13,7 @@ int convertDDMMYYYYtoint(String formatString) {
     int years = safeInt(dateArray[2]);
     int[] daysYearArray = {0,0};
     int daysAmount = convertIntDatetoDays(days, months);
-    daysAmount += (years-1913) * 365;
-    //daysYearArray[0] = convertIntDatetoDays(days, months);
-    //daysYearArray[1] = years;
+    daysAmount += (years-1913) * 365; 
     return daysAmount;
 }
 
@@ -54,6 +53,7 @@ String convertDateIntToDDMMYYYY(int dateInt) {
     
 }
 
+// convert minutes into string in HH:MM format
 String mintoHHMMConvert(int timeInt) {
     int copyMinute = timeInt;
     int hour=0;
@@ -65,6 +65,8 @@ String mintoHHMMConvert(int timeInt) {
     return (hour+":"+copyMinute);
     
 }
+
+// convert minutes to string in HH:MM format
 String minToHoursandMin(int timeInt) {
     int copyMinute = abs(timeInt);
     int hour=0;
@@ -90,12 +92,14 @@ String minToHoursandMin(int timeInt) {
 
 }
 
+// convert HH:MM String to minutes
 int convertHHMMtoMin(String hhmmString) {
     // check if correct
     int convertInt = safeInt(hhmmString);
     return hhmmToMinConvert(convertInt);
 }
 
+//convert day and month to number of days through the year
 int convertIntDatetoDays(int days, int months) {
     int dayNum = 0;
     for (int i = 1; i < (months - 1); i++) {
@@ -105,6 +109,7 @@ int convertIntDatetoDays(int days, int months) {
     return dayNum;
 }
 
+// get the departure delay for a flight
 int getDepartureDelay(Flight f) {
     int depTime  = hhmmToMinConvert(f.depTime);
     int scheduledDepTime  = hhmmToMinConvert(f.scheduledDepTime);
@@ -118,6 +123,7 @@ int getDepartureDelay(Flight f) {
     return delayTime;
 }
 
+// get arrival delay for a flight
 int getArrivalDelay(Flight f) {
     int arrTime  = hhmmToMinConvert(f.arrTime);
     int scheduledArrTime  = hhmmToMinConvert(f.scheduledArrTime);
@@ -125,13 +131,5 @@ int getArrivalDelay(Flight f) {
     if (delayTime < -720) {
         delayTime += 1440;
     }
-    /*
-    if (abs((arrTime - scheduledArrTime)) < abs((arrTime + 24*60) - scheduledArrTime) ) {
-        delayTime = arrTime - scheduledArrTime;
-    }
-    else {
-        delayTime = (arrTime + 24*60) - scheduledArrTime;
-    }
-    */
     return delayTime;
 }

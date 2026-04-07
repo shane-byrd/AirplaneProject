@@ -1,3 +1,5 @@
+// initialises screens with appropriate buttons, written by Shane Byrd
+//
 String[][] chooseGraphScatterPlotX = {
     {"scxDistance","Distance"},
     {"scxDuration","Duration"}//,{"scxYear","Time (year)"}
@@ -22,7 +24,7 @@ String[][] chooseGraphBarChartCat = {
 String[][] chooseGraphBarChartData = {
     {"bcdDist","Mean Distance"}, {"bcdDelay","Mean delay time"},
     {"bcdDuration","Mean flight duration"},
-    {"bcdDiverted","% Diverted"},{"bcdCancelled","% Cancelled"},
+    {"bcdDiverted","% Diverted"},//{"bcdCancelled","% Cancelled"},
     {"bcdfreq","Frequency"}
 };
 String[][] chooseHistoGramX = {
@@ -63,65 +65,62 @@ Set<String> monthSet = new HashSet<>(Arrays.asList(monthsStringArray));
 
 void loadHomeScreen() {
     homeScreen.staticRects.add(navBar);
-    homeScreen.hasTextEdit = true;
-    /*
-    TextEdit te = new TextEdit(400,500,300,120, "teid",
-    color(#64da78),
-    color(#64da78),
-    color(0),
-    smallFont,
-    144);
-    */
-    //homeScreen.addTextEdit(te);
-    RangeSlider rs = new RangeSlider(200,SCREENY/2, 600,50,"rs",
-    5,5,
-    12,12,
-    color(#64da78),
-    color(#db4e47),
-    color(#2c77c1),
-    color(0),
-    smallFont
-    );
-    homeScreen.addButton(filterDataChange);
-    homeScreen.hasRangeSlider = true;
-    homeScreen.rangeSlider = rs;
-    /*
-    RangeSlider(
-        float x, float y, float w, float h,
-        String idLabel,
-        float gapX, float gapY,
-        float handleW, float handleH,
-        color trackColor,
-        color selectedTrackColor,
-        color handleColor,
-        color textColor,
-        PFont sliderFont
-    )
-    */
+    Button tableView = new Button(SCREENX/2 -450/2, 150, 450, 120, "tabView", "Go to table screen", 
+    color(#2B9453), color(0), color(0), mediumFont);
+
+    Button graphView = new Button(SCREENX/2 -450/2, 300, 450, 120, "grView", "Create a graph", 
+    color(#9600df), color(0), color(0), mediumFont);
+
+    Button fil = new Button(SCREENX/2 -450/2, 450, 450, 120, "filView", "Set filters", 
+    color(#e37d30), color(0), color(0), mediumFont);
+
+    Button searchButton = new Button(SCREENX/2 -450/2, 600, 450, 120, "searchView", "Search for data", 
+    color(#5a90d6), color(0), color(0), mediumFont);
+    tableView.xDepth = 8;
+    tableView.yDepth = 8;
+    graphView.xDepth = 8;
+    graphView.yDepth = 8;
+    fil.xDepth = 8;
+    fil.yDepth = 8;
+    searchButton.xDepth = 8;
+    searchButton.yDepth = 8;
+    homeScreen.addButton(tableView);
+    homeScreen.addButton(graphView);
+    homeScreen.addButton(fil);
+    homeScreen.addButton(searchButton);
+    TextBox tb = new TextBox(SCREENX/2 - 100,12,"Home Screen","hscreenLabel",largeFont);
+    homeScreen.addTextBox(tb);
+
+
 }
 void loadTableScreen() {
     tableScreen.staticRects.add(navBar);
-    tableScreen.addButton(filterDataChange);
+    tableScreen.addButton(homeButton);
     tableScreen.hasHorizontalScroll = true;
     tableScreen.hasVerticalScroll = true;
     tableScreen.hasTable = true;
 
     Button prevPageButton = new Button(
-        680, 3, 65, 40, "prevPage", "Previous\nPage",
+        720, 3, 65, 40, "prevPage", "Previous\nPage",
         color(#5a90d6), color(#c25151), color(#000000), smallFont
     );
 
     Button nextPageButton = new Button(
-        754, 3, 65, 40, "nextPage", "Next\nPage",
+        800, 3, 65, 40, "nextPage", "Next\nPage",
         color(#5a90d6), color(#c25151), color(#000000), smallFont
     );
     tableScreen.addButton(nextPageButton);
     tableScreen.addButton(prevPageButton);
     Button clearButton = new Button(
-        825, 14, 50, 22, "clearButton", "Clear",
+        290, 14, 70, 22, "clearButton", "Reset",
+        color(#2B9453), color(#c25151), color(#000000), smallFont
+    );
+    Button removeAll = new Button(
+        370, 14, 70, 22, "removeButton", "Clear",
         color(#c25151), color(#c25151), color(#000000), smallFont
     );
     tableScreen.addButton(clearButton);
+    tableScreen.addButton(removeAll);
     clearButton.visible = true;
     Table table = new Table(0,50,tableAmount + 1,18,100,30,2,2,
         color(#D4FCE4),  // background color
@@ -129,6 +128,7 @@ void loadTableScreen() {
         color(#2B9453),  // title color
         smallFont);
     tableScreen.table = table;
+
 
     tableScreen.minXOffset = 0;
     tableScreen.maxXOffset = 80 * 15;
@@ -147,7 +147,7 @@ void loadTableScreen() {
     color(#000000),
     smallFont
     );
-    tableScreen.addButton(searchOpen);
+    //tableScreen.addButton(searchOpen);
     DropDown filterColumnMenu = new DropDown(
     955, 11.5, 130, 30, "filterColumn", "Filter: All",
     color(#ffe666),
@@ -173,9 +173,9 @@ void loadTableScreen() {
     filterColumnMenu.addButton("depTime", "Dep Time");
     filterColumnMenu.addButton("arrTime", "Arr Time");
 
-    tableScreen.addDropDownMenu(filterColumnMenu);
+    //tableScreen.addDropDownMenu(filterColumnMenu);
     DropDown showMenu = new DropDown(
-            145,11.5,100,30,"show","Show", 
+            170,11.5,100,30,"show","Show", 
         color(#5a90d6), // Button Color
         color(#000000), // text Color
         smallFont,
@@ -211,7 +211,7 @@ void loadTableScreen() {
 
     // Jasper (Xubo):
     DropDown sortMenu = new DropDown(
-        260,11.5,200,30,"sort","Sort", 
+        945,11.5,200,30,"sort","Sort", 
     color(#5a90d6), // Button Color
     color(#000000), // text Color
     smallFont,
@@ -232,6 +232,104 @@ void loadTableScreen() {
 
     tableScreen.addDropDownMenu(showMenu);
     tableScreen.addDropDownMenu(sortMenu);
+
+    //
+    searchScreen.staticRects.add(navBar);
+    searchScreen.addButton(homeButton);
+    searchScreen.hasSearchTable = true;
+    searchScreen.hasVerticalScroll = true;
+    searchScreen.hasHorizontalScroll = true;
+
+    searchScreen.table = table;
+    searchScreen.minXOffset = 0;
+    searchScreen.maxXOffset = 80 * 15;
+    searchScreen.minYOffset = 0;
+    searchScreen.maxYOffset = 50 * flights.size();
+    searchScreen.hscroll = hscroll;
+    searchScreen.vscroll = vscroll;
+    
+    //
+}
+
+void loadSearchScreen() {
+    TextEdit minDistance = new TextEdit(
+        620, 11.5, 120, 30,
+        "minDist",
+    color(#FFD580),
+    color(#a1e6ff),
+    color(0),
+    smallFont,
+    144,
+    "Min Distance"
+    );
+    TextEdit maxDistance = new TextEdit(
+        750, 11.5, 120, 30,
+        "maxDist",
+    color(#FFD580),
+    color(#a1e6ff),
+    color(0),
+    smallFont,
+    144,
+    "Max Distance"
+    );
+
+    TextEdit startTime = new TextEdit(
+        880, 11.5, 120, 30,
+        "startTime",
+    color(#FFD580),
+    color(#a1e6ff),
+    color(0),
+    smallFont,
+    144,
+    "Start Time hh:mm"
+    );
+    TextEdit endTime = new TextEdit(
+        1010, 11.5, 120, 30,
+        "endTime",
+    color(#FFD580),
+    color(#a1e6ff),
+    color(0),
+    smallFont,
+    144,
+    "End Time hh:mm"
+    );
+    searchScreen.addTextEdit(minDistance);
+    searchScreen.addTextEdit(maxDistance);
+    searchScreen.addTextEdit(startTime);
+    searchScreen.addTextEdit(endTime);
+
+    Button clearButton = new Button(
+        150, 14, 50, 22, "clearButton", "Clear",
+        color(#c25151), color(#c25151), color(#000000), smallFont
+    );
+    searchScreen.addButton(clearButton);
+
+    DropDown filterColumnMenu = new DropDown(
+    470, 11.5, 130, 30, "filterColumn", "Filter: All",
+    color(#a2d0fa),
+    color(#000000),
+    smallFont,
+    7, 9,
+    color(#d5ecff),
+    color(#4ea4f5),
+    color(#c25151)
+    );
+
+    filterColumnMenu.addButton("all", "All");
+    filterColumnMenu.addButton("date", "Date");
+    filterColumnMenu.addButton("airline", "Airline");
+    filterColumnMenu.addButton("flightNumber", "Flight Number");
+    filterColumnMenu.addButton("depAirport", "Dep. Airport");
+    filterColumnMenu.addButton("depCity", "Dep. City");
+    filterColumnMenu.addButton("depState", "Dep. State");
+    filterColumnMenu.addButton("destAirport", "Dest. Airport");
+    filterColumnMenu.addButton("destCity", "Dest. City");
+    filterColumnMenu.addButton("destState", "Dest. State");
+    filterColumnMenu.addButton("distance", "Distance");
+    filterColumnMenu.addButton("depTime", "Dep Time");
+    filterColumnMenu.addButton("arrTime", "Arr Time");
+    searchScreen.addDropDownMenu(filterColumnMenu);
+
 }
 void loadGraphCreateScreen() {
 
@@ -246,7 +344,7 @@ void loadGraphCreateScreen() {
         color(#9600df), // top button
         color(#adadae)  // secondary button
         );
-    graphCreateScreen.addButton(filterDataChange);
+    graphCreateScreen.addButton(homeButton);
     grcMenu.addButton("bcOption","Bar Chart");
     grcMenu.addButton("scOption","Scatter Plot");
     grcMenu.addButton("hOption","Histogram");
@@ -538,9 +636,9 @@ void loadGraphCreateScreen() {
 }
 void loadGraphShowScreen() {
     graphShowScreen.staticRects.add(navBar);
-    graphShowScreen.addButton(filterDataChange);
+    graphShowScreen.addButton(homeButton);
     graphShowScreen.hasScatterPlot = true;
-    ScatterPlot sp = new ScatterPlot(100,120,900,570, mediumFont, smallFont, 5,color(#f55656));
+    ScatterPlot sp = new ScatterPlot(105,120,870,530, mediumFont, smallFont, 5,color(#f55656));
     graphShowScreen.scatterPlot = sp; 
 
     Button backButton = new Button(1100, 57, 50, 50, "backW", "Back",
@@ -550,13 +648,14 @@ void loadGraphShowScreen() {
     smallFont
     );
     graphShowScreen.addButton(backButton);
+    graphShowScreen.addTextStore(mouseGraphHolder);
 }
 
 void loadBarChartShowScreen() {
-    barChartShowScreen.addButton(filterDataChange);
+    barChartShowScreen.addButton(homeButton);
     barChartShowScreen.staticRects.add(navBar);
     barChartShowScreen.hasBarChart = true;
-    BarChart bc = new BarChart(100,120,900,570, mediumFont, smallFont,color(#9657df), 5);
+    BarChart bc = new BarChart(105,120,870,530, mediumFont, smallFont,color(#9657df), 5);
     barChartShowScreen.barChart = bc; 
 
     Button backButton = new Button(1100, 57, 50, 50, "backW", "Back",
@@ -566,6 +665,7 @@ void loadBarChartShowScreen() {
     smallFont
     );
     barChartShowScreen.addButton(backButton);
+barChartShowScreen.addTextStore(mouseGraphHolder);
 }
 
 void loadBarGraphShowScreen() {
@@ -577,7 +677,7 @@ void loadBarGraphShowScreen() {
 
 void loadFilterDataScreen() {
     filterDataScreen.staticRects.add(navBar);
-    
+    filterDataScreen.addButton(homeButton);
     DropDown nonNumFilter = new DropDown(400,150,250,40,"filterNonNum","Filter Non-Numerical Data",
         color(#f5af5f), // Button Color
         color(#000000), // text Color
@@ -829,9 +929,9 @@ void updateFilterLabel() {
 
 void loadHistogramShowScreen() {
     histogramShowScreen.staticRects.add(navBar);
-    histogramShowScreen.addButton(filterDataChange);
+    histogramShowScreen.addButton(homeButton);
     histogramShowScreen.hasHistogram = true;
-    Histogram hs = new Histogram(100,120,900,570, mediumFont, smallFont,color(#f76fda));
+    Histogram hs = new Histogram(105,120,870,530, mediumFont, smallFont,color(#f76fda));
     histogramShowScreen.histogram = hs; 
 
     Button backButton = new Button(1100, 57, 50, 50, "backW", "Back",
@@ -841,13 +941,12 @@ void loadHistogramShowScreen() {
     smallFont
     );
     histogramShowScreen.addButton(backButton);
-
-
+    histogramShowScreen.addTextStore(mouseGraphHolder);
 }
 
 void loadPiChartShowScreen() {
     piChartShowScreen.staticRects.add(navBar);
-    piChartShowScreen.addButton(filterDataChange);
+    piChartShowScreen.addButton(homeButton);
     Button backButton = new Button(1100, 57, 50, 50, "backW", "Back",
     color(#9657df), // Button Color
     color(#adadae), // secondary Button

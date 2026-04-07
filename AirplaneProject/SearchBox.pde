@@ -1,5 +1,4 @@
-//draw function
-
+// functions relating to search box, written by Jasper (Xubo)
 void drawSearchBox() {
   stroke(0);
 
@@ -24,6 +23,7 @@ void drawSearchBox() {
 
   noStroke();
 }
+/*
 void applyFilters() {
   filteredFlights.clear();
 
@@ -37,6 +37,30 @@ void applyFilters() {
     
 
 tableScreen.table.updateDataSize(filteredFlights);
+  XOFFSET = 0;
+  YOFFSET = 0;
+}
+*/
+void applyFilters() {
+  filteredFlights.clear();
+
+  for (Flight f : flights) {
+    boolean matchesSearch = matchesSearchFilter(f);
+    boolean matchesDistance = matchesDistanceFilter(f);
+    boolean matchesTime = matchesTimeFilter(f);
+
+    if (matchesSearch && matchesDistance && matchesTime) {
+      filteredFlights.add(f);
+    }
+  }
+  if (searchApplied == false ) {
+    searchFlights = new ArrayList<Flight>();
+  }
+  else {
+    searchFlights = filteredFlights;
+  }
+  
+  tableScreen.table.updateDataSize(filteredFlights);
   XOFFSET = 0;
   YOFFSET = 0;
 }
@@ -85,10 +109,132 @@ void handleTextInputForSearch() {
   } else if (key != CODED && key != ENTER && key != RETURN) {
     searchText += key;
   }
+  ifNoSearch();
   applyFilters();
 }
 
 boolean overSearchBox() {
   return mouseX >= searchBoxX && mouseX <= searchBoxX + searchBoxW &&
          mouseY >= searchBoxY && mouseY <= searchBoxY + searchBoxH;
+}
+
+void handleNumberInput(String target) {
+  if (keyCode == BACKSPACE) {
+    if (target.equals("minDistance") && searchScreen.textEditMap.get("minDist").textLabel.length() > 0) {
+      searchScreen.textEditMap.get("minDist").textLabel = searchScreen.textEditMap.get("minDist").textLabel.substring(0, searchScreen.textEditMap.get("minDist").textLabel.length() - 1);
+    }
+    if (target.equals("maxDistance") && searchScreen.textEditMap.get("maxDist").textLabel.length() > 0) {
+      searchScreen.textEditMap.get("maxDist").textLabel = searchScreen.textEditMap.get("maxDist").textLabel.substring(0, searchScreen.textEditMap.get("maxDist").textLabel.length() - 1);
+    }
+  } else if (key >= '0' && key <= '9') {
+    if (target.equals("minDistance")) searchScreen.textEditMap.get("minDist").textLabel += key;
+    if (target.equals("maxDistance")) searchScreen.textEditMap.get("maxDist").textLabel += key;
+  }
+  ifNoSearch();
+  applyFilters();
+}
+
+void handleTimeInput(String target) {
+  if (keyCode == BACKSPACE) {
+    if (target.equals("startTime") && searchScreen.textEditMap.get("startTime").textLabel.length() > 0) {
+      searchScreen.textEditMap.get("startTime").textLabel = searchScreen.textEditMap.get("startTime").textLabel.substring(0, searchScreen.textEditMap.get("startTime").textLabel.length() - 1);
+    }
+    if (target.equals("endTime") && searchScreen.textEditMap.get("endTime").textLabel.length() > 0) {
+      searchScreen.textEditMap.get("endTime").textLabel = searchScreen.textEditMap.get("endTime").textLabel.substring(0, searchScreen.textEditMap.get("endTime").textLabel.length() - 1);
+    }
+  } else if ((key >= '0' && key <= '9') || key == ':') {
+    if (target.equals("startTime") && searchScreen.textEditMap.get("startTime").textLabel.length() < 5) searchScreen.textEditMap.get("startTime").textLabel += key;
+    if (target.equals("endTime") && searchScreen.textEditMap.get("endTime").textLabel.length() < 5) searchScreen.textEditMap.get("endTime").textLabel += key;
+  }
+  ifNoSearch();
+  applyFilters();
+}
+
+
+boolean matchesDistanceFilter(Flight f) {
+  int minDist = parseIntegerOrDefault(searchScreen.textEditMap.get("minDist").textLabel, -1);
+  int maxDist = parseIntegerOrDefault(searchScreen.textEditMap.get("maxDist").textLabel, -1);
+
+  if (minDist != -1 && f.distance < minDist) {
+    return false;
+  }
+
+  if (maxDist != -1 && f.distance > maxDist) {
+    return false;
+  }
+
+  return true;
+}
+
+boolean matchesTimeFilter(Flight f) {
+  int startT = parseTimeOrDefault(searchScreen.textEditMap.get("startTime").textLabel, -1);
+  int endT = parseTimeOrDefault(searchScreen.textEditMap.get("endTime").textLabel, -1);
+
+  int dep = f.depTime;
+
+  if (startT != -1 && dep < startT) {
+    return false;
+  }
+
+  if (endT != -1 && dep > endT) {
+    return false;
+  }
+
+  return true;
+}
+
+
+int parseIntegerOrDefault(String s, int defaultValue) {
+  s = trim(s);
+  if (s.equals("")) return defaultValue;
+
+  try {
+    return Integer.parseInt(s);
+  } 
+  catch(Exception e) {
+    return defaultValue;
+  }
+}
+
+
+int parseTimeOrDefault(String s, int defaultValue) {
+  s = trim(s);
+  if (s.equals("")) return defaultValue;
+
+  try {
+    if (s.indexOf(":") != -1) {
+      String[] parts = split(s, ':');
+      if (parts.length == 2) {
+        int hour = Integer.parseInt(parts[0]);
+        int minute = Integer.parseInt(parts[1]);
+        return hour * 100 + minute;
+      }
+    } else {
+      return Integer.parseInt(s);
+    }
+  } 
+  catch(Exception e) {
+    return defaultValue;
+  }
+
+  return defaultValue;
+}
+
+void ifNoSearch() {
+  if (searchText.equals("") && 
+  searchScreen.textEditMap.get("minDist").textLabel.equals("")
+  && (searchScreen.textEditMap.get("minDist").textLabel.equals("") 
+  ||searchScreen.textEditMap.get("minDist").textLabel.equals(searchScreen.textEditMap.get("minDist").defaultText) )
+&& (searchScreen.textEditMap.get("maxDist").textLabel.equals("") 
+  ||searchScreen.textEditMap.get("maxDist").textLabel.equals(searchScreen.textEditMap.get("maxDist").defaultText) )
+&& (searchScreen.textEditMap.get("startTime").textLabel.equals("") 
+  ||searchScreen.textEditMap.get("startTime").textLabel.equals(searchScreen.textEditMap.get("startTime").defaultText) )
+&& (searchScreen.textEditMap.get("endTime").textLabel.equals("") 
+  ||searchScreen.textEditMap.get("endTime").textLabel.equals(searchScreen.textEditMap.get("endTime").defaultText) )
+  ) {
+    searchApplied = false;
+  }
+  else {
+    searchApplied = true;
+  }
 }

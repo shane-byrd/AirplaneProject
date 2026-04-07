@@ -1,3 +1,5 @@
+// class to represent a screen, and deal with screen interactions, (mouse movement and press) and drawing
+// written by Shane Byrd
 class Screen {
     ArrayList<Button> buttons;
     ArrayList<TextBox> textBoxes;
@@ -32,6 +34,7 @@ class Screen {
     boolean hasTextEdit;
     boolean hasHistogram;
     boolean hasPiChart;
+    boolean hasSearchTable;
 
     int minXOffset;
     int maxXOffset;
@@ -57,6 +60,7 @@ class Screen {
         this.hasBarChart = false;
         this.hasScatterPlot = false;
         this.hasTable = false;
+        this.hasSearchTable = false;
         this.hasBarGraph = false;
         this.hasRangeSlider = false;
         this.hasActiveTextField = false;
@@ -67,8 +71,10 @@ class Screen {
     void draw() {
 
         if (hasTable) {
-            //table.draw(titleData,flights,whichValues);
             table.draw(titleData,filteredFlights,whichValues);
+        }
+        if (hasSearchTable) {
+            table.draw(titleData,searchFlights,whichValues);
         }
         for (StaticRect sr : staticRects) {
             sr.draw();

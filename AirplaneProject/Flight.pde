@@ -1,3 +1,5 @@
+// class for storing all data relating to a single flight, written by Shane Byrd
+//
 class Flight {
   int flightYear;
   int flightMonth;

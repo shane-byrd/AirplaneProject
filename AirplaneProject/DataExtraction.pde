@@ -1,4 +1,5 @@
-
+// functions for extracting arrayList of data from flight arraylist, 
+// written by Shane Byrd
 ArrayList<Float> getDistance(ArrayList<Flight> flights) {
     ArrayList<Float> r = new ArrayList<Float>();
     for (Flight f : flights) {
@@ -33,14 +34,6 @@ ArrayList<Float> getArrivalDelay(ArrayList<Flight> flights) {
         if (delayTime < -720) {
             delayTime += 1440;
         }
-        /*
-        if (abs((arrTime - scheduledArrTime)) < abs((arrTime + 24*60) - scheduledArrTime) ) {
-            delayTime = arrTime - scheduledArrTime;
-        }
-        else {
-            delayTime = (arrTime + 24*60) - scheduledArrTime;
-        }
-        */
         r.add((float)delayTime);
     }
     return r;
@@ -145,7 +138,6 @@ String getStringData(Flight f, String category) {
         return f.destCity;
     }
     if (category.equals("State (Destination)")) {
-        //println(33);
         return f.destState;
     }
 

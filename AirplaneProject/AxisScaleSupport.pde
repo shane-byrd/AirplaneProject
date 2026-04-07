@@ -1,4 +1,4 @@
-
+// code for handling axis scale sliders for graphs, written by Mingqi
 float scatterPlotRawMinX = 0;
 float scatterPlotRawMaxX = 1;
 float scatterPlotRawMinY = 0;
@@ -21,8 +21,9 @@ VerticalRangeSlider histogramYScaleSlider;
 RangeSlider barChartXScaleSlider;
 VerticalRangeSlider barChartYScaleSlider;
 
-String formatScaleValue(float value) {
-    return String.format("%.0f", value);
+String formatScaleValue(float value, String type) {
+    return getCorrectFormat(value, type);
+    //return String.format("%.0f", value);
 }
 
 float safeAxisSpan(float low, float high) {
@@ -76,8 +77,8 @@ void ensureScatterPlotScaleSliders(Screen s) {
     }
     if (scatterPlotYScaleSlider == null) {
         scatterPlotYScaleSlider = new VerticalRangeSlider(
-            s.scatterPlot.x + s.scatterPlot.w + 35,
-            s.scatterPlot.y,
+            s.scatterPlot.x + s.scatterPlot.w + 170,
+            s.scatterPlot.y +40,
             36,
             s.scatterPlot.h,
             "scatterYAxisScale",
@@ -115,8 +116,8 @@ void ensureHistogramScaleSliders(Screen s) {
     }
     if (histogramYScaleSlider == null) {
         histogramYScaleSlider = new VerticalRangeSlider(
-            s.histogram.x + s.histogram.w + 35,
-            s.histogram.y,
+            s.histogram.x + s.histogram.w + 170,
+            s.histogram.y + 40,
             36,
             s.histogram.h,
             "histogramYAxisScale",
@@ -154,8 +155,8 @@ void ensureBarChartScaleSliders(Screen s) {
     }
     if (barChartYScaleSlider == null) {
         barChartYScaleSlider = new VerticalRangeSlider(
-            s.barChart.x + s.barChart.w + 35,
-            s.barChart.y,
+            s.barChart.x + s.barChart.w + 170,
+            s.barChart.y +40,
             36,
             s.barChart.h,
             "barChartYAxisScale",
@@ -257,6 +258,8 @@ void drawScatterPlotScaleControls(Screen s) {
     scatterPlotXScaleSlider.maxDisplayValue = scatterPlotRawMaxX;
     scatterPlotYScaleSlider.minDisplayValue = scatterPlotRawMinY;
     scatterPlotYScaleSlider.maxDisplayValue = scatterPlotRawMaxY;
+    scatterPlotXScaleSlider.type = scatterTypeX;
+    scatterPlotYScaleSlider.type = scatterTypeY;
     scatterPlotXScaleSlider.draw();
     scatterPlotYScaleSlider.draw();
 }
@@ -268,6 +271,8 @@ void drawHistogramScaleControls(Screen s) {
     histogramXScaleSlider.maxDisplayValue = histogramRawMaxX;
     histogramYScaleSlider.minDisplayValue = histogramRawMinY;
     histogramYScaleSlider.maxDisplayValue = histogramRawMaxY;
+    histogramXScaleSlider.type = hsType;
+    histogramYScaleSlider.type = " ";
     histogramXScaleSlider.draw();
     histogramYScaleSlider.draw();
 }
@@ -279,6 +284,8 @@ void drawBarChartScaleControls(Screen s) {
     barChartXScaleSlider.maxDisplayValue = showBCdata.size();
     barChartYScaleSlider.minDisplayValue = barChartRawMinY;
     barChartYScaleSlider.maxDisplayValue = barChartRawMaxY;
+    barChartYScaleSlider.type = " ";
+    barChartYScaleSlider.type = " ";
     barChartXScaleSlider.draw();
     barChartYScaleSlider.draw();
 }

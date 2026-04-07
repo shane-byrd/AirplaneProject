@@ -1,3 +1,5 @@
+// class for button with 3d effect, highlight effect, and pushdown effect, 
+// written by Shane Byrd
 class Button extends Widget
 {
     String textLabel;
@@ -23,6 +25,7 @@ class Button extends Widget
         this.buttonFont = buttonFont;
         this.secondaryButtonColor = secondaryButtonColor;
 
+        //unless overridden set the two side colors to be 80% as bright as the button color
         this.sideColor = color(red(buttonColor)*.8,green(buttonColor)*.8,blue(buttonColor)*.8);
         this.secondarySideColor = color(red(secondaryButtonColor)*.8,green(secondaryButtonColor)*.8,blue(secondaryButtonColor)*.8);
 
@@ -39,7 +42,7 @@ class Button extends Widget
         if (visible) {
             strokeWeight(strokeWidth);
             if (!active) {
-
+                // if in unpressable state
                 stroke(0);
                 fill(color(#adadae));
                 rect(x-xDepth,y+yDepth,w,h);
@@ -49,6 +52,7 @@ class Button extends Widget
                 text(textLabel, x+ w/2-xDepth, y + h/2 + yDepth);
             }
             else if (pressed) {
+                // if in the process of being pressed
                 stroke(220);
                 fill(buttonColor);
                 rect(x-xDepth,y+yDepth,w,h);
@@ -59,6 +63,7 @@ class Button extends Widget
             }
             else {
                 if (mouseOver) {
+                    // change highlight to white if mosueOver
                     stroke(220);
                     fill(sideColor);
                     quad(x,y, x,y+h, x-xDepth,y+h+yDepth, x-xDepth,y+yDepth);
@@ -71,6 +76,7 @@ class Button extends Widget
                     text(textLabel, x+ w/2, y + h/2);
                 }
                 else {
+                    // draw with 3d effect
                     stroke(0);
                     noStroke();
                     strokeWeight(strokeWidth);
@@ -86,17 +92,6 @@ class Button extends Widget
                 }
             }
             noStroke();
-            /*
-            // draw button
-            fill(buttonColor);
-            rect(x,y,w,h,6);
-
-            // draw text
-            fill(textLabelColor);
-            textFont(buttonFont);
-            textAlign(CENTER,CENTER);
-            text(textLabel, x+ w/2, y + h/2);
-            */
         }
 
 

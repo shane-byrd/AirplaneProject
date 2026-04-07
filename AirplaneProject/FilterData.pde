@@ -1,13 +1,5 @@
-/*
-void ExactValue(String attribute, String[] values) { NONNUM
-// edit to add month 
-void ExactValue(String attribute, int[] values) { NUM
-void BetweenRange(String attribute, int minValue, int maxValue) { NUM
-void BelowValue(String attribute, int maxValue) { NUM
-void AboveValue(String attribute, int minValue) { NUM
-*/
-
-
+// functions for applying filter to data, for choosing which of Mingqi's functions to call, written by Shane Byrd
+//
 boolean filterDataNonNumerical(String category, String value) {
     if (category.equals("") || value.equals("")) {
         currentError.titleText = "Error: empty values";

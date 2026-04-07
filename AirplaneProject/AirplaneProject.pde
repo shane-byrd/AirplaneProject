@@ -1,3 +1,6 @@
+// main file, written by Shane Byrd
+//
+
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.*;
@@ -5,6 +8,7 @@ import java.io.*;
 import java.util.stream.Stream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+
 // screen size
 final int SCREENX=1200;
 final int SCREENY=800;
@@ -29,13 +33,14 @@ Screen barGraphShowScreen;
 Screen histogramShowScreen;
 Screen filterDataScreen;
 Screen piChartShowScreen;
+Screen searchScreen;
 
 Screen currentScreen;
 
 
 //Define screen booleans
-boolean OnHomeScreen = false;;
-boolean OnTableScreen = true;
+boolean OnHomeScreen = true;
+boolean OnTableScreen = false;
 boolean OnGraphCreateScreen = false;
 boolean OnGraphShowScreen = false;
 boolean OnbarChartShowScreen = false;
@@ -43,15 +48,20 @@ boolean OnBarGraphShowScreen = false;
 boolean OnFilterDataScreen = false;
 boolean OnHistogramShowScreen = false;
 boolean OnPiChartShowScreen = false;
+boolean OnSearchScreen = false;
+
 //constant UI
 DropDown visualiseSelect;
 StaticRect navBar;
+Button homeButton;
 
 // shared UI
 Button filterDataChange;
+TextStore mouseGraphHolder;
 
 // filter global variables
 boolean filtersApplied = false;
+boolean searchApplied = false;
 
 // error global variable
 boolean errorMessageActive = false;
@@ -99,13 +109,12 @@ String histogramYLabel;
 float intervalWidthHistogram;
 String hsType;
 
-
 // search global variables
-boolean searchOpen = false;
+boolean searchOpen = true;
 boolean searchActive = false;
-float searchBoxX = 955;
+float searchBoxX = 300;
 float searchBoxY = 11.5;
-float searchBoxW = 130;
+float searchBoxW = 150;
 float searchBoxH = 30;
 String searchText = "";
 String selectedColumn = "All";
@@ -123,6 +132,8 @@ String[] titleData =
         "Dest. Airport", "Dest. City", "Dest. State", "Dest. WAC", 
         "STD", "ATD", "STA", "ATA", "Cancelled", "Diverted", "Distance"
     };
+
+// for use in mapping to other arrays
 Integer[] indexValues = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17};
 Integer[] monthIndex = {1,2,3,4,5,6,7,8,9,10,11,12};
 
@@ -132,7 +143,7 @@ float[] daysInMonth = {0,31,28,31,30,31,30,31,31,30,31,30,31};
 // array determines which data points are visible for table
 boolean[] whichValues = {true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true};
 
-//IDlabels for show menu
+// IDlabels for show drop down menu
 String[] showMenuLabels = 
     {
         "showdate","showairline","showFlightNumber",
@@ -144,19 +155,16 @@ String[] showMenuLabels =
 
 //map from showmenu ID labels to indexValues
 HashMap showLabelToIndex = StringToIntegerMap(showMenuLabels, indexValues);
-ArrayList<Flight> flights;
-ArrayList<Flight> filteredFlights;
+
+// flight arrayLists
+ArrayList<Flight> flights;              // unchanging
+ArrayList<Flight> filteredFlights;      // changes based on filter
+ArrayList<Flight> searchFlights;        // changes based on filtering, defaults to empty if no filter applied
 
 // pagination
 int tableAmount = 1000;
 int currentPage = 0;
 int totalPages = 1;
-
-/*
-PImage mainImg;
-PImage filterImg;
-PImage graphImg;
-*/
 
 void settings() 
 {
@@ -169,36 +177,28 @@ void setup()
     smallFont = loadFont("ArialUnicodeMS-14.vlw");
     mediumFont = loadFont("ArialUnicodeMS-24.vlw");
     largeFont = loadFont("ArialUnicodeMS-30.vlw");
+
     // load flights from file
     flights = readFromFile("flights10k.csv");
     filteredFlights = new ArrayList<Flight>(flights);
-    /*
-    mainImg = loadImage("stripes2.png");
-    filterImg = loadImage("fi.jpeg");
-    graphImg = loadImage("gi.jpeg");
-    */
+    searchFlights = new ArrayList<Flight>();
 
 
-    // select visualisation button is always visible
-    visualiseSelect = new DropDown(10,11.5,120,30,"whichV","Pick Visualisation", 
-        color(#5a90d6), // Button Color
-        color(#000000), // text Color
-        smallFont,        // Font Type
-        7,9,              // xgap, ygap
-        color(#a8ceff), // background color
-        color(#125ab8), // top button
-        color(#c25151)  // secondary button
-        );
-    visualiseSelect.addButton("vtable","Table");
-    visualiseSelect.addButton("vgraph","Graph");
 
-    filterDataChange = new Button(SCREENX-10-70-20, 11.5, 70, 30, "filterChange", "Filter Data",
-    color(#e37d30), // Button Color
-    color(#adadae), // secondary Button
-    color(0),         // text color
-    smallFont
-    );
 
+
+
+    homeButton = new Button(10,11.5,120,30,"homeB","Home Screen",
+    color(#5a90d6),
+    color(0),
+    color(0),
+    smallFont);
+
+    // mosue location holder for graphs
+    mouseGraphHolder = new TextStore(5, SCREENY-25, 300, 20,
+    "mouseGraph","X-Value: , Y-Value: ",
+    color(#e3bea6),
+    smallFont);
 
     // error message
     currentError = new ErrorMessage(300,200, 400,300,"error",
@@ -208,7 +208,8 @@ void setup()
     mediumFont,
     40
     );
-    //nav bar is alwats visible
+
+    //nav bar at top of screen, always visible
     navBar = new StaticRect(0,0,SCREENX, 53, "topBar", color(#fffaed), false);
     navBar.strokeOn = true;
 
@@ -216,7 +217,9 @@ void setup()
     homeScreen = new Screen();
     loadHomeScreen();
     tableScreen = new Screen();
+    searchScreen = new Screen();
     loadTableScreen();
+    loadSearchScreen();
     graphCreateScreen = new Screen();
     loadGraphCreateScreen();
     graphShowScreen = new Screen();
@@ -232,25 +235,45 @@ void setup()
     piChartShowScreen = new Screen();
     loadPiChartShowScreen();
 
-    currentScreen = tableScreen;
-
-    
+    currentScreen = homeScreen;
 
     // initialise scatterplot data
     scatterPlotXData = new ArrayList<Float>();
     scatterPlotYData = new ArrayList<Float>();
     
+    // set page limits for table screen
     updatePagination();
     updateVerticalLimit();
 
 }
 
 void draw() 
-{
-    if (OnFilterDataScreen) {
+{   
+    if (OnHomeScreen) {
+        // draw coloured rounded squares around buttons
+        background(#fcebfb);
+        stroke(0);
+
+        fill(#D4FCE4);
+        rect(-100,140,980,148,90);
+
+        fill(#bc85ff);
+        rect(SCREENX/2 -280,290,980,148,90);
+
+        fill(#f5bf82);
+        rect(-100,440,980,148,90);
+
+        fill(#c5edfa);
+        rect(SCREENX/2 -280,590,980,148,90);
+        noStroke();
+    }
+    // change background color for different screens
+    else if (OnFilterDataScreen) {
         background(#f5d7bf);
     }
-
+    else if (OnSearchScreen) {
+        background(#d9ebfc);
+    }
     else if (!OnTableScreen) {
         background(#d3bfe3);
     }
@@ -258,23 +281,39 @@ void draw()
         background(#defadf);
 
     }
+    if (OnSearchScreen) {
+        if (searchFlights.size() == 0 && searchApplied == false) {
+            fill(120);
+            textFont(smallFont);
+            textAlign(CENTER,CENTER);
+            text("You have not searched anything yet",SCREENX/2,SCREENY/2);
+        }
+        if (searchFlights.size() == 0 && searchApplied == true) {
+            fill(120);
+            textFont(smallFont);
+            textAlign(CENTER,CENTER);
+            text("No entries match your search", SCREENX/2,SCREENY/2);
+        }
+    }
+
+    // call currents screens draw function
     currentScreen.draw();
 
     if (OnTableScreen) {
         updatePagination();
         updateVerticalLimit();
         drawPageInfo();
-        if (searchOpen) {
-            drawSearchBox();
-        }
+
+    }
+    if (OnSearchScreen) {
+        drawSearchBox();
     }
 
-    visualiseSelect.draw();
-
-    if (currentScreen == graphShowScreen) { // scatter plot
+    // draw axis scale controls for scatterplot, histogram and bar chart
+    if (currentScreen == graphShowScreen) { 
         drawScatterPlotScaleControls(currentScreen);
     }
-    if (currentScreen == histogramShowScreen) { // scatter plot
+    if (currentScreen == histogramShowScreen) { 
         drawHistogramScaleControls(currentScreen);
     }
     if (currentScreen == barChartShowScreen) {
@@ -290,12 +329,17 @@ void draw()
 
 void keyPressed() {
     if (!errorMessageActive) {
-        if (OnTableScreen && searchActive) {
-            handleTextInputForSearch();
-            return;
+        if (OnSearchScreen) {
+            // deal with search screens various text fields
+            if (searchActive)handleTextInputForSearch();
+            else if (searchScreen.textEditMap.get("minDist").active) handleNumberInput("minDistance");
+            else if (searchScreen.textEditMap.get("maxDist").active) handleNumberInput("maxDistance");
+            else if (searchScreen.textEditMap.get("startTime").active) handleTimeInput("startTime");
+            else if (searchScreen.textEditMap.get("endTime").active) handleTimeInput("endTime");
         }
         if (currentScreen.hasTextEdit && currentScreen.hasActiveTextField) {
             if (key == BACKSPACE) {
+                // remove one character
                 if (currentScreen.activeTextField.textLabel.length() > 0) {
                     currentScreen.activeTextField.textLabel =
                         currentScreen.activeTextField.textLabel.substring(
@@ -309,13 +353,14 @@ void keyPressed() {
                     (key >= '0' && key <= '9') ||
                     key == ' ' || key == '/') {
                     if (currentScreen.activeTextField.textLabel.length() < currentScreen.activeTextField.maxLength) {
+                        // add character if it is alphanumeric or and the length is below max length
                         currentScreen.activeTextField.textLabel += key;
                     }
                 }
 
             }
         }
-
+        // handle scrolling
         boolean offsetChange = false;
         if (currentScreen.hasVerticalScroll) {
             if (keyCode == UP) {
@@ -348,7 +393,6 @@ void keyPressed() {
 
 void mousePressed() {
     currentScreen.updateMousePress();
-    handleDropDownMousePress(visualiseSelect);
     if (currentScreen.hasHorizontalScroll) {
         currentScreen.hscroll.click = currentScreen.hscroll.cursorOverWidget(); 
     }
@@ -359,6 +403,7 @@ void mousePressed() {
         currentScreen.rangeSlider.release();
     }
 }
+
 void mouseReleased() {
     if (errorMessageActive) {
         if (currentError.cursorOverWidget()) {
@@ -377,13 +422,14 @@ void mouseReleased() {
             currentScreen.rangeSlider.release();
         }
         currentScreen.updateMouseReleased();
-        handleDropDownReleased(visualiseSelect);
+
+        // handle each screens logic
         if (OnHomeScreen) {
             homeScreenPress();
         }
         if (OnTableScreen) {
             tableScreenPress();
-            if (searchOpen) searchActive = overSearchBox();
+            
         }
         if (OnGraphCreateScreen) {
             graphCreateScreenPress();
@@ -402,6 +448,10 @@ void mouseReleased() {
         }
         if (OnPiChartShowScreen) {
             piChartShowScreenPress();
+        }
+        if (OnSearchScreen) {
+            searchScreenPress();
+            searchActive = overSearchBox();
         }
     
 
@@ -428,10 +478,11 @@ void mouseWheel(MouseEvent event) {
 void mouseDragged() {
     if (!errorMessageActive) {
         currentScreen.updateHighlights();
-        handleDropDownHighlight(visualiseSelect);
+
         if (currentScreen.hasRangeSlider) {
             currentScreen.rangeSlider.drag();
         }
+
         if (currentScreen.hasVerticalScroll) {
             if (currentScreen.vscroll.click ){
             // calculate new Y offset based off of mouse position
@@ -439,6 +490,7 @@ void mouseDragged() {
                 clampScroll();
             }
         }
+
         if (currentScreen.hasHorizontalScroll) {
             if (currentScreen.hscroll.click) {
             // calculate new X offset based off of mouse position
@@ -454,18 +506,15 @@ void mouseDragged() {
 
 void mouseMoved() {
     currentScreen.updateHighlights();
-    handleDropDownHighlight(visualiseSelect);
+    // update mouse label for bar chart, scatterplot or histogram
+    if (currentScreen.hasBarChart) {
+        currentScreen.barChart.updateMouse();
+    }
+    if (currentScreen.hasScatterPlot) {
+        currentScreen.scatterPlot.updateMouse(minXsp,maxXsp,minYsp,maxYsp);
+    }
+    if (currentScreen.hasHistogram) {
+        currentScreen.histogram.updateMouse(minValueHistogram,maxValueHistogram,minfreqHistogram,maxfreqHistogram);
+    }
 }
 
-void updateGraphLoadButton() {
-    if (currentScreen == filterDataScreen) {
-        if (ifFilterActive()) {
-            filterDataScreen.buttonMap.get("addFilter").active = true;
-        }
-    }
-    if (currentScreen == graphCreateScreen) {
-        if (isLoadGraphActive()) {
-            graphCreateScreen.buttonMap.get("loadGraph").active = true;
-        }
-    }
-}

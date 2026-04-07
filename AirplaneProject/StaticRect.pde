@@ -1,3 +1,5 @@
+// code to draw a non interactable rectangle
+// written by Shane Byrd
 class StaticRect extends Widget {
     color rectColor;
     boolean strokeOn;

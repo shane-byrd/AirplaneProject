@@ -1,4 +1,5 @@
-// Tommy (Zhihan)
+// Code to sort flight data 
+// written by Tommy (Zhihan)
 void sortFlights(String sortType) {
   Collections.sort(filteredFlights, new Comparator<Flight>() {
     public int compare(Flight a, Flight b) {

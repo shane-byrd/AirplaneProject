@@ -65,6 +65,7 @@ class ErrorMessage extends Widget
         }
     }
     @Override
+    // only return true if its over the cross
     boolean cursorOverWidget() {
         return (mouseX > x+(w-cross) && mouseX < x + w &&
         mouseY > y && mouseY < y + cross);

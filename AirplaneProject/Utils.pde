@@ -305,6 +305,7 @@ void handleInteriorDropDownReleased(InteriorDropDown idd) {
     idd.mouseOver = idd.cursorOverWidget();
 }
 
+// counts number of true values in a boolean array
 int getShowAmount(boolean[] whichValues) {
     int sum = 0;
     for (boolean val : whichValues) {

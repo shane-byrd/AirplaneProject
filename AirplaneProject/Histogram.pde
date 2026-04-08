@@ -19,24 +19,29 @@ class Histogram extends Graph {
         float xSpan = safeAxisSpan(lowest, highest);
         float ySpan = safeAxisSpan(lowestFrequency, highestFrequency);
 
+        // draw background
         fill(255);
         rect(x - w*backspace,y - h*backspace, extraspace*w, extraspace*h);
         fill(0);
 
+        // draw title
         textAlign(LEFT, TOP);
         textFont(titleFont);
         text(titleText,x,y - h*backspace + 5);
         
+        // draw ylabel
         textFont(dataFont);
         textAlign(RIGHT, TOP);
         fill(150);
         text(yLabel, x + w + (w* backspace)-10, y + h+30);
 
+        // draw frequency label
         fill(150);
         textFont(dataFont);
         textAlign(CENTER, TOP);
         text("Frequency", x - (w* backspace/2), y-24);
 
+        // draw horizontal gridlines
         stroke(220);
         fill(0);
         float yDiv = bestDivider(lowestFrequency, highestFrequency);
@@ -53,6 +58,8 @@ class Histogram extends Graph {
                 stroke(220);
                 line(x, yLoc, x+w, yLoc);
                 stroke(0);
+
+                // draw grid labels
                 line(x, yLoc, x-10, yLoc);
                 text(String.format("%.0f",yVal), x, yLoc);
             }
@@ -65,26 +72,28 @@ class Histogram extends Graph {
                 text("There is no data to show",x+w/2,y+h/2);
         }
 
-
+        // draw each bar
         for (int i = 0; i < frequencyData.length; i++) {
             float binLow = histogramRawMinX + intervalWidth * i;
             float binHigh = binLow + intervalWidth;
             if (binHigh < lowest || binLow > highest) {
                 continue;
             }
-
+            // mingqi additions
             float clippedLow = max(binLow, lowest);
             float clippedHigh = min(binHigh, highest);
             float locX = x + w * ((clippedLow - lowest) / xSpan);
             float rectW = max(1, w * ((clippedHigh - clippedLow) / xSpan));
             float freq = constrain(frequencyData[i], lowestFrequency, highestFrequency);
             float rectH = h * ((freq - lowestFrequency) / ySpan);
+            // end of mingqi additions
 
             fill(dataColor);
             stroke(0);
             rect(locX, y + h - rectH, rectW, rectH);
 
-            if (i % 3 == 0) {
+            // only draw value every 3 ticks
+            if (i % 4 == 0) {
                 fill(0);
                 line(locX, y+h, locX, y+h+10);
                 String valueFormat = getCorrectFormat(binLow, hsType);
@@ -95,14 +104,20 @@ class Histogram extends Graph {
 
         fill(0);
         stroke(0);
+        // draw x and y axis
         line(x,y,x,y+h);
         line(x,y+h, x+w,y+h);
+
+        // draw lowest value
         textAlign(LEFT,TOP);
         text(getCorrectFormat(lowest, hsType), x, y+h+30);
+
+        // draw highest value
         textAlign(RIGHT,TOP);
         text(getCorrectFormat(highest, hsType), x+w-70, y+h+30);
     }
     void updateMouse(float lowest, float highest, float lowestFrequency, float highestFrequency) {
+        // update mouse Label
         if (mouseX > x && mouseX < x + w 
         && mouseY > y && mouseY < y + h) {
             float xVal = lowest + ((mouseX - x)/w) * (highest - lowest);

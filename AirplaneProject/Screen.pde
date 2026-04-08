@@ -21,7 +21,6 @@ class Screen {
     PiChart piChart;
     HorizontalScrollBar hscroll;
     VerticalScrollBar vscroll;
-    BarGraph barGraph;
     RangeSlider rangeSlider;
 
     boolean hasVerticalScroll;
@@ -29,7 +28,6 @@ class Screen {
     boolean hasBarChart;
     boolean hasScatterPlot;
     boolean hasTable;
-    boolean hasBarGraph;
     boolean hasRangeSlider;
     boolean hasTextEdit;
     boolean hasHistogram;
@@ -61,7 +59,6 @@ class Screen {
         this.hasScatterPlot = false;
         this.hasTable = false;
         this.hasSearchTable = false;
-        this.hasBarGraph = false;
         this.hasRangeSlider = false;
         this.hasActiveTextField = false;
         this.hasHistogram = false;
@@ -69,7 +66,7 @@ class Screen {
     }
     
     void draw() {
-
+        // call each of the screens attributes draw function
         if (hasTable) {
             table.draw(titleData,filteredFlights,whichValues);
         }
@@ -101,9 +98,7 @@ class Screen {
         if (hasBarChart) {
             barChart.draw();
         }
-        if (hasBarGraph) {
-            barGraph.draw();
-        }
+
         if (hasHistogram) {
             histogram.draw(intervalFrequencyData,minValueHistogram,maxValueHistogram,minfreqHistogram,maxfreqHistogram,histogramTitle,histogramYLabel,intervalWidthHistogram,hsType);
         }
@@ -150,16 +145,18 @@ class Screen {
     // give idlabel and text label of button or item pressed
     String[] getButtonPressed() {
         String[] returnString = {"None","None"};
+        // use recursive logic for drop down menus
         for (DropDown dd : ddMenus) {
             if (dd.visible) {
                 String[] checkString = handleDropDownArray(dd);
                 if (!checkString[0].equals("None") && !checkString[0].equals("Opened")) {
-                    //return returnString;
                     returnString[0] = checkString[0];
                     returnString[1] = checkString[1];
                 }
             }
         }
+
+        // handle buttons
         for (Button b : buttons) {
             if (b.visible) {
                 if (b.cursorOverWidget()) {
@@ -168,6 +165,8 @@ class Screen {
                 }
             }
         }
+
+        // handle making text fields active
         boolean tePress=false;
         for (TextEdit textED : textEdits) {
             if (textED.visible) {
@@ -201,6 +200,8 @@ class Screen {
             handleDropDownArray(dd);
         }
     }
+
+    //update the pressed state of buttons and drop downs
     void updateMousePress() {
         for (Button b : buttons) {
             if (b.cursorOverWidget()) {
@@ -216,6 +217,7 @@ class Screen {
 
     }
 
+    //update highlight state of buttons and dropdowns
     void updateHighlights() {
         for (Button b : buttons) {
             b.mouseOver = b.cursorOverWidget();
@@ -227,6 +229,8 @@ class Screen {
         }
 
     }
+
+    //update pressed state of buttons and highlights
     void updateMouseReleased() {
         for (Button b : buttons) {
             b.pressed = false;

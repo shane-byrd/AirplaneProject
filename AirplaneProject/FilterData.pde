@@ -1,6 +1,7 @@
 // functions for applying filter to data, for choosing which of Mingqi's functions to call, written by Shane Byrd
 //
 boolean filterDataNonNumerical(String category, String value) {
+    // for non numerical data
     if (category.equals("") || value.equals("")) {
         currentError.titleText = "Error: empty values";
         currentError.textLabel = "You must enter values";
@@ -12,7 +13,7 @@ boolean filterDataNonNumerical(String category, String value) {
     String exactCategory = "";
     String exactValue = value;
     if (category.equals(value)) {
-    // month / cancelled / diverted
+    // if month / cancelled / diverted
         
         if (monthSet.contains(category)) {
             exactCategory = "Months";
@@ -73,6 +74,7 @@ boolean filterDataNonNumerical(String category, String value) {
 }
 
 boolean filterDataNumerical(String category, String type, String value) {
+    // for single value numerical data
     if (category.equals("") || value.equals("")) {
         currentError.titleText = "Error: empty values";
         currentError.textLabel = "You must enter values";
@@ -113,30 +115,33 @@ boolean filterDataNumerical(String category, String type, String value) {
     }
 
     if (type.equals("Greater Than")) {
+        // apply filter and update label and table
         AboveValue(category, exactInt);
         filtersApplied = true;
         updateFilterLabel();
         tableScreen.table.updateDataSize(filteredFlights);
-    updateVerticalLimit();
-    updatePagination();
+        updateVerticalLimit();
+        updatePagination();
 
     }
     else if (type.equals("Less Than")) {
+        // apply filter and update label and table
         BelowValue(category, exactInt);
         filtersApplied = true;
         updateFilterLabel();
         tableScreen.table.updateDataSize(filteredFlights);
-    updateVerticalLimit();
-    updatePagination();
+        updateVerticalLimit();
+        updatePagination();
 
     }
     else if (type.equals("Single Value")) {
+        // apply filter and update label and table
         ExactValue(category, exactInt);
         filtersApplied = true;
         updateFilterLabel();
         tableScreen.table.updateDataSize(filteredFlights);
-    updateVerticalLimit();
-    updatePagination();
+        updateVerticalLimit();
+        updatePagination();
     }
     else {
         return false;
@@ -145,6 +150,7 @@ boolean filterDataNumerical(String category, String type, String value) {
 }
 
 boolean filterDataNumerical(String category, String type, String valueOne, String valueTwo) {
+    // for range numerical data
     int exactIntOne = 0;
     int exactIntTwo = 0;
     if (!category.equals("Date")) {
@@ -188,9 +194,12 @@ boolean filterDataNumerical(String category, String type, String valueOne, Strin
     else {
         return false;
     }
-    //BetweenRange(category,exactIntTwo,exactIntOne);
+
+    // call Mingqi's function
     BetweenRange(category,exactIntOne,exactIntTwo);
     filtersApplied = true;
+
+    // update table and filter label
     updateFilterLabel();
     tableScreen.table.updateDataSize(filteredFlights);
     updateVerticalLimit();

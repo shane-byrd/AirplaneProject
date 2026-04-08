@@ -1,5 +1,7 @@
 // functions for extracting arrayList of data from flight arraylist, 
 // written by Shane Byrd
+
+// functions to get arraylist of values from the an arraylist of flights, used for scatterplots
 ArrayList<Float> getDistance(ArrayList<Flight> flights) {
     ArrayList<Float> r = new ArrayList<Float>();
     for (Flight f : flights) {
@@ -20,6 +22,9 @@ ArrayList<Float> getDepartureDelay(ArrayList<Flight> flights) {
         else {
             delayTime = (depTime + 24*60) - scheduledDepTime;
         }
+        if (delayTime > 1300) {
+            delayTime -= 24 *60;
+        }
         r.add((float)delayTime);
     }
     return r;
@@ -30,9 +35,15 @@ ArrayList<Float> getArrivalDelay(ArrayList<Flight> flights) {
     for (Flight f : flights) {
         int arrTime  = hhmmToMinConvert(f.arrTime);
         int scheduledArrTime  = hhmmToMinConvert(f.scheduledArrTime);
-        int delayTime = arrTime - scheduledArrTime;
-        if (delayTime < -720) {
-            delayTime += 1440;
+        int delayTime;
+        if (abs((arrTime - scheduledArrTime)) < abs((arrTime + 24*60) - scheduledArrTime) ) {
+            delayTime = arrTime - scheduledArrTime;
+        }
+        else {
+            delayTime = (arrTime + 24*60) - scheduledArrTime;
+        }
+        if (delayTime > 1300) {
+            delayTime -= 24 *60;
         }
         r.add((float)delayTime);
     }
@@ -45,9 +56,16 @@ ArrayList<Float> getDuration(ArrayList<Flight> flights) {
         int arrTime = hhmmToMinConvert(f.arrTime);
         int depTime = hhmmToMinConvert(f.depTime);
         if (arrTime < depTime) {
-            arrTime += (24*60);
+            if (abs(arrTime -depTime) < 60 ) {
+                arrTime += 60;
+            }
+            else {
+                arrTime += (24*60);
+            }
+            
         }
         r.add((float)arrTime - depTime);
+
     }
     return r;
 }
@@ -99,6 +117,7 @@ ArrayList<Float> getTimeDayATA(ArrayList<Flight> flights) {
     return r;
 }
 
+// find minimum and maximum of an arraylist of floats
 float[] getMinAndMax(ArrayList<Float> floatArray) {
     boolean firstMin = true;
     boolean firstMax = true;
@@ -115,7 +134,7 @@ float[] getMinAndMax(ArrayList<Float> floatArray) {
 }
 
 
-
+// get hashmap data from category and data string
 Map<String, Float> getHashData(String category, String data, ArrayList<Flight> flights) {
     Map<String, Float> returnMap = new HashMap<>();
     Map<String, Float> freqMap = new HashMap<>();
@@ -127,6 +146,7 @@ Map<String, Float> getHashData(String category, String data, ArrayList<Flight> f
     return returnMap;
 }
 
+// get the string data based on the category from a single flight
 String getStringData(Flight f, String category) {
     if (category.equals("Airport (Destination)")) {
         return f.destAirport;
@@ -154,20 +174,25 @@ String getStringData(Flight f, String category) {
     return null;
 }
 
+// get the float data from a single flight based on the category and the current value
 Float getFloatData(Flight f, String data, Float currentVal, Float freqVal) {
     if (data.equals("Mean Distance")) {
+        // calculate average
         Float newMean = ( (currentVal * freqVal) + f.distance ) / (freqVal + 1);
         return newMean;
     }
     if (data.equals("Mean delay time")) {
+        //calculate average
         Float newMean = ( (currentVal * freqVal) + getSingleDepartureDelay(f) ) / (freqVal + 1);
         return newMean;
     }
     if (data.equals("Mean flight duration")) {
+        // calculate average
         Float newMean = ( (currentVal * freqVal) + getSingleDuration(f) ) / (freqVal + 1);
         return newMean;
     }
     if (data.equals("% Diverted")) {
+        //calculate new proportion
         Float curval;
         if (f.diverted) curval = 100.0;
         else curval = 0.0;
@@ -176,6 +201,7 @@ Float getFloatData(Flight f, String data, Float currentVal, Float freqVal) {
         
     }
     if (data.equals("% Cancelled")) {
+        //calculate new proportion
         Float curval;
         if (f.cancelled) curval = 100.0;
         else curval = 0.0;
@@ -188,7 +214,7 @@ Float getFloatData(Flight f, String data, Float currentVal, Float freqVal) {
     return 0.0;
 }
 
-
+// get departure and arrival delay for a single flight
 Float getSingleDepartureDelay(Flight f) {
     int depTime  = hhmmToMinConvert(f.depTime);
     int scheduledDepTime  = hhmmToMinConvert(f.scheduledDepTime);
@@ -224,6 +250,7 @@ Float getSingleDuration(Flight f) {
     return (float) (arrTime - depTime);
 }
 
+// get the min and max value of the bar chart category map
 float[] getMinMaxBCVal() {
     Map.Entry<String, Float> re = categoryMap.entrySet().iterator().next();
     float minval = re.getValue();
@@ -241,6 +268,7 @@ float[] getMinMaxBCVal() {
     return returnFl;
 }
 
+// get the nin and max of the bar chart data
 float[] getMinMaxShowData() {
     float[] returnFL = {0.0,0.0};
     if (ascendingBC) {

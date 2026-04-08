@@ -15,12 +15,11 @@ class TextStore extends Widget
         this.buttonIdStore = "";
     }
 
-    // for drawing only with primary color
     void draw() {
         if (visible) {
             stroke(0);
 
-            // draw button
+            // draw text field
             fill(buttonColor);
             rect(x,y,w,h,6);
 

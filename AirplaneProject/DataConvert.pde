@@ -120,6 +120,9 @@ int getDepartureDelay(Flight f) {
     else {
         delayTime = (depTime + 24*60) - scheduledDepTime;
     }
+    if (delayTime > 1300) {
+        delayTime -= 24 *60;
+    }
     return delayTime;
 }
 
@@ -130,6 +133,9 @@ int getArrivalDelay(Flight f) {
     int delayTime = arrTime - scheduledArrTime;
     if (delayTime < -720) {
         delayTime += 1440;
+    }
+    if (delayTime > 1300) {
+        delayTime -= 24 *60;
     }
     return delayTime;
 }

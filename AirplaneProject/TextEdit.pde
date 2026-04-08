@@ -1,5 +1,5 @@
 // class for a text input field where you can enter text
-// written by Shane Byrd
+// written by Jasper (Xubo)
 class TextEdit extends Widget
 {
     String textLabel;
@@ -24,30 +24,6 @@ class TextEdit extends Widget
     }
 
 
-/*
-void drawSearchBox() {
-  stroke(0);
-
-  if (searchActive) {
-    fill(#ffffff);
-    stroke(#125ab8);
-  } else {
-    fill(#f7f7f7);
-    stroke(120);
-  }
-
-  rect(searchBoxX, searchBoxY, searchBoxW, searchBoxH, 6);
-
-  fill(80);
-  textFont(smallFont);
-  textAlign(LEFT, CENTER);
-
-  if (searchText.equals("")) {
-    text("Search...", searchBoxX + 8, searchBoxY + searchBoxH/2);
-  } else {
-    text(searchText, searchBoxX + 8, searchBoxY + searchBoxH/2);
-  }
-*/
     void draw() {
         if (visible) {
 
@@ -63,11 +39,11 @@ void drawSearchBox() {
             rect(x,y,w,h,6);
 
             // draw text
-            //fill(textLabelColor);
             fill(80);
             textFont(buttonFont);
             textAlign(CENTER,CENTER);
             
+            // if there is no text, draw the defualt text
             if (textLabel.equals("")) {
                 text(defaultText, x+ w/2, y + h/2);
             }

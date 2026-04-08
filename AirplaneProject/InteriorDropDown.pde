@@ -11,7 +11,7 @@ class InteriorDropDown extends DropDown
         bottomY = y;
     }
     void addButton(String buttonLabel, String buttonText) {
-
+        // increase the bottomY by the height of buttons
         Button b = new Button(x+w+2*gapX,bottomY,w,h,buttonLabel,buttonText, buttonColor, secondaryButtonColor, textLabelColor, buttonFont);
         bottomY += h + gapY;
         selectionButtons.add(b);
@@ -49,9 +49,11 @@ class InteriorDropDown extends DropDown
                 idd.draw();
             }
         }
-
-strokeWeight(strokeWidth);
+        
+        // draw top button
+        strokeWeight(strokeWidth);
         if (pressed) {
+            // draw flat effect
             stroke(220);
             fill(buttonColor);
             rect(x-xDepth,y+yDepth,w,h);
@@ -61,6 +63,7 @@ strokeWeight(strokeWidth);
             text(textLabel, x+ w/2-xDepth, y + h/2 + yDepth);
         }
         else {
+            // draw 3d effect
             if (mouseOver) {
                 stroke(220);
                 fill(interiorSideColor);
@@ -89,20 +92,11 @@ strokeWeight(strokeWidth);
             }
         }
         noStroke();
-        /*
-        // draw button
-        fill(buttonColor);
-        rect(x,y,w,h,6);
 
-        // draw text
-        fill(textLabelColor);
-        textFont(buttonFont);
-        textAlign(CENTER,CENTER);
-        text(textLabel, x+ w/2, y + h/2);
-        */
 
     }
     String whichButtonOver() {
+        // return which button the mouse is over
         for (Button b : selectionButtons) {
             if (b.cursorOverWidget()) {
                 return b.idLabel;
@@ -111,6 +105,7 @@ strokeWeight(strokeWidth);
         return "None";
     }
     boolean overBackGround() {
+        // return whether the mouse is over the background
         return (mouseX > x - gapX &&
         mouseX < x + gapX + w &&
         mouseY > y-gapY &&

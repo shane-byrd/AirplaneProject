@@ -6,8 +6,7 @@ import java.util.Queue;
 import java.util.*;
 import java.io.*;
 import java.util.stream.Stream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+
 
 // screen size
 final int SCREENX=1200;
@@ -29,7 +28,6 @@ Screen tableScreen;
 Screen graphCreateScreen;
 Screen graphShowScreen;
 Screen barChartShowScreen;
-Screen barGraphShowScreen;
 Screen histogramShowScreen;
 Screen filterDataScreen;
 Screen piChartShowScreen;
@@ -44,19 +42,16 @@ boolean OnTableScreen = false;
 boolean OnGraphCreateScreen = false;
 boolean OnGraphShowScreen = false;
 boolean OnbarChartShowScreen = false;
-boolean OnBarGraphShowScreen = false;
 boolean OnFilterDataScreen = false;
 boolean OnHistogramShowScreen = false;
 boolean OnPiChartShowScreen = false;
 boolean OnSearchScreen = false;
 
 //constant UI
-DropDown visualiseSelect;
 StaticRect navBar;
 Button homeButton;
 
 // shared UI
-Button filterDataChange;
 TextStore mouseGraphHolder;
 
 // filter global variables
@@ -184,17 +179,13 @@ void setup()
     searchFlights = new ArrayList<Flight>();
 
 
-
-
-
-
     homeButton = new Button(10,11.5,120,30,"homeB","Home Screen",
     color(#5a90d6),
     color(0),
     color(0),
     smallFont);
 
-    // mosue location holder for graphs
+    // mouse location holder for graphs
     mouseGraphHolder = new TextStore(5, SCREENY-25, 300, 20,
     "mouseGraph","X-Value: , Y-Value: ",
     color(#e3bea6),
@@ -224,8 +215,6 @@ void setup()
     loadGraphCreateScreen();
     graphShowScreen = new Screen();
     loadGraphShowScreen();
-    barGraphShowScreen = new Screen();
-    loadBarGraphShowScreen();
     barChartShowScreen = new Screen();
     loadBarChartShowScreen();
     filterDataScreen = new Screen();
@@ -393,6 +382,8 @@ void keyPressed() {
 
 void mousePressed() {
     currentScreen.updateMousePress();
+
+    // update scroll and slider click state
     if (currentScreen.hasHorizontalScroll) {
         currentScreen.hscroll.click = currentScreen.hscroll.cursorOverWidget(); 
     }
@@ -459,6 +450,7 @@ void mouseReleased() {
 
 }
 void mouseWheel(MouseEvent event) {
+    // change the y or x offset
     if (!errorMessageActive) {
         float e = event.getCount();
         if (currentScreen.hasHorizontalScroll) {

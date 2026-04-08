@@ -13,7 +13,7 @@ void drawPageInfo() {
   }
   fill(#a8ceff);
   stroke(0);
-    rect(463,11.5,210,30,6);
+    rect(463,11.5,280,30,6);
     fill(#000000);
   String pageText = startRow + " - " + endRow + " / " + filteredFlights.size() + "    Page " + (currentPage + 1) + " of " + totalPages;
   text(pageText, 467, 20);

@@ -50,6 +50,7 @@ class DropDown extends Widget
         border = false;
         bottomY = y + h + gapY;
 
+        // set side colour to 80% as light by defualt unless overriden
         this.sideColor = color(red(topButtonColor)*.8,green(topButtonColor)*.8,blue(topButtonColor)*.8);
         this.interiorSideColor = color(red(buttonColor)*.8,green(buttonColor)*.8,blue(buttonColor)*.8);
         this.xDepth = 5;
@@ -104,7 +105,7 @@ class DropDown extends Widget
                 i++;
             }
         }
-
+        // draw top button
         strokeWeight(strokeWidth);
         if (pressed) {
             stroke(220);
@@ -144,18 +145,7 @@ class DropDown extends Widget
             }
         }
         noStroke();
-        /*
-        // draw top button
-        fill(topButtonColor);
-        rect(x,y,w,h,6);
 
-        // draw text
-        fill(textLabelColor);
-        textFont(buttonFont);
-        textAlign(CENTER,CENTER);
-        text(textLabel, x+ w/2, y + h/2);
-        }
-        */
         }
 
     }
@@ -197,6 +187,7 @@ class DropDown extends Widget
 
         }
         strokeWeight(strokeWidth);
+        // draw top button
         if (pressed) {
             stroke(220);
             fill(topButtonColor);
@@ -235,17 +226,7 @@ class DropDown extends Widget
             }
         }
         noStroke();
-        // draw button
-        /*
-        fill(topButtonColor);
-        rect(x,y,w,h,6);
 
-        // draw text
-        fill(textLabelColor);
-        textFont(buttonFont);
-        textAlign(CENTER,CENTER);
-        text(textLabel, x+ w/2, y + h/2);
-        */
 
         }
 

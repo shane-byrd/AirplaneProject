@@ -44,7 +44,7 @@ class Table {
         //float nw = (cellW * visibleCount) + (visibleCount + 1) * gapX;
 
 
-//
+//      Additions made by Tommy (Zhihan)
         int startIndex = currentPage * tableAmount;
         int endIndex = min(startIndex + tableAmount, flights.size());
         int pageRows = endIndex - startIndex;
@@ -52,18 +52,22 @@ class Table {
         float drawRows = pageRows + 1;
         float nw = (cellW * visibleCount) + (visibleCount + 1) * gapX;
         float nh = (cellH * drawRows) + (drawRows + 1) * gapY;
-//
+//      end of Additions made by Tommy (Zhihan)
+
         fill(backgroundColor);
         rect(x-XOFFSET,y-YOFFSET,nw,nh);
+
         // draw individual cells
         for (int r = 0; r < int(drawRows); r++) {
             for (int c = 0; c < int(cols); c++) {
                 
                 if (whichValues[c] == true) {
+
                     // calculate location of cell
                     float cellX = x + gapX + ((cellW + gapX) * (c - falseArray[c]));
                     float cellY = y + gapY + ((cellH + gapY) * (r));
                     if (r != 0) {
+
                         // draw cell
                         fill(cellColor);
                         rect(cellX - XOFFSET, cellY - YOFFSET, cellW, cellH);
@@ -72,10 +76,7 @@ class Table {
                         fill(#000000);
                         textFont(tableFont);
                         textAlign(CENTER,CENTER);
-                        /*
-                        String outputText;
-                        outputText = flights.get(r-1).valuesInStringFormat[c];
-                        */
+
                         int flightIndex = startIndex + (r-1);
                         if (flightIndex < flights.size()) {
                             String outputText = flights.get(flightIndex).valuesInStringFormat[c];

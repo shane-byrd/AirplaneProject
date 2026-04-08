@@ -10,11 +10,12 @@ class BarChart extends Graph {
     }
 
     void draw() {
-
+        // define padding variables
         float extraspace = 1.2;
         float backspace = 0.1;
         float ySpan = safeAxisSpan(minBCval, maxBCval);
 
+        // draw background
         fill(255);
         rect(x - w*backspace, y - h*backspace, w*extraspace, h*extraspace);
 
@@ -76,10 +77,12 @@ class BarChart extends Graph {
             line(x,y+h, x+w,y+h);
             return;
         }
-
+        // mingqi additions
         int startIndex = constrain(barChartVisibleStartIndex, 0, max(showBCdata.size() - 1, 0));
         int endIndex = constrain(barChartVisibleEndIndexExclusive, startIndex + 1, showBCdata.size());
         int visibleCount = max(1, endIndex - startIndex);
+        // end of mingqi additions
+
         float width = (w / visibleCount) - gapX;
 
         int localIndex = 0;
@@ -108,7 +111,6 @@ class BarChart extends Graph {
         //update the mouse label
         if (mouseX > x && mouseX < x + w 
         && mouseY > y && mouseY < y + h) {
-            //float xVal = minBCval + ((mouseX - x)/w) * (xHigh - xLow);
             float yVal = minBCval + ((h-(mouseY - y))/h) * (maxBCval - minBCval);
             mouseGraphHolder.textLabel = "Y-value: "+getCorrectFormat(yVal,"");
         }

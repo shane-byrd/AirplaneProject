@@ -5,6 +5,7 @@ void homeScreenPress() {
 
     // change screens depending on which button was pressed
     if (buttonPressed[0].equals("tabView")) {
+        // change to table screen
         OnHomeScreen = false;
         OnTableScreen = true;
         currentScreen = tableScreen;
@@ -12,18 +13,21 @@ void homeScreenPress() {
         currentScreen.updateHighlights();
     }
     if (buttonPressed[0].equals("grView")) {
+        // change to graph screen
         OnHomeScreen = false;
         OnGraphCreateScreen = true;
         currentScreen = graphCreateScreen;
         currentScreen.updateHighlights();
     }
     if (buttonPressed[0].equals("filView")) {
+        // change to filter screen
         OnHomeScreen = false;
         OnFilterDataScreen = true;
         currentScreen = filterDataScreen;
         currentScreen.updateHighlights();
     }
     if (buttonPressed[0].equals("searchView")) {
+        // change to search screen
         OnHomeScreen = false;
         OnSearchScreen = true;
         currentScreen = searchScreen;
@@ -334,6 +338,7 @@ void graphShowScreenPress() {
     handleHomePress(buttonPressed[0]);
     if (!buttonPressed[0].equals("None") && !buttonPressed[0].equals("Opened")) {
         if (buttonPressed[0].equals("backW")) {
+            // go back if back button was pressed
             OnGraphShowScreen = false;
             OnGraphCreateScreen = true;
             currentScreen = graphCreateScreen;
@@ -347,6 +352,7 @@ void barChartShowScreenPress() {
     handleHomePress(buttonPressed[0]);
     if (!buttonPressed[0].equals("None") && !buttonPressed[0].equals("Opened")) {
         if (buttonPressed[0].equals("backW")) {
+            // go back if back button was pressed
             OnbarChartShowScreen = false;
             OnGraphCreateScreen = true;
             currentScreen = graphCreateScreen;
@@ -366,6 +372,7 @@ void filterDataScreenPress() {
     }
     if (!buttonPressed[0].equals("None") && !buttonPressed[0].equals("Opened")) {
         if (buttonPressed[0].equals("TypChNonNum")) {
+            // if the non numerical option is selected
             clearAllFilterOptions();
             filterDataScreen.textStoreMap.get("FTypeH").textLabel = buttonPressed[1];
             filterDataScreen.textStoreMap.get("1TypeH").visible = true;
@@ -373,9 +380,9 @@ void filterDataScreenPress() {
 
         }
         if (buttonPressed[0].equals("TypeChNum")) {
+            // if the numerical option is selected
             clearAllFilterOptions();
             filterDataScreen.textStoreMap.get("FTypeH").textLabel = buttonPressed[1];
-            
             filterDataScreen.textStoreMap.get("1TypeH").visible = true;
             filterDataScreen.dropDownMap.get("filterNum").visible = true;
 
@@ -386,7 +393,7 @@ void filterDataScreenPress() {
                 || buttonPressed[0].length() > 13 && buttonPressed[0].substring(0,14).equals("filNonDiverted")
                 || buttonPressed[0].length() > 14 && buttonPressed[0].substring(0,15).equals("filNonCancelled")
             ) {
-
+                // if the non numerical and  month or  diverted or cancelled option is selected
                 filterDataScreen.textBoxMap.get("InfoSmallOne").textLabel = "";
                 filterDataScreen.textBoxMap.get("InfoSmallTwo").textLabel = "";
                 filterDataScreen.textEditMap.get("valueFirstHolder").visible = false;
@@ -398,12 +405,14 @@ void filterDataScreenPress() {
 
             }
             else {
+                // if the other non numerical option was selected
                 filterDataScreen.textEditMap.get("valueFirstHolder").visible = true;
                 setFilterText1("Insert Info: ");
             }
 
         }
         if (buttonPressed[0].length() > 5 && buttonPressed[0].substring(0,6).equals("filNum")) {
+            // if the numerical option was selected
             filterDataScreen.textBoxMap.get("InfoNum").textLabel = "";
             filterDataScreen.textStoreMap.get("1TypeH").textLabel = buttonPressed[1];
             filterDataScreen.dropDownMap.get("typeNumFilter").visible = true;
@@ -421,6 +430,7 @@ void filterDataScreenPress() {
 
         }
         if (buttonPressed[0].length() > 3 && buttonPressed[0].substring(0,4).equals("nFil")) {
+            // deal with the various types of numerical data labels
             filterDataScreen.textStoreMap.get("2TypeH").textLabel = buttonPressed[1];
             
             if (filterDataScreen.textStoreMap.get("1TypeH").textLabel.equals("Time of day: Departure") || filterDataScreen.textStoreMap.get("1TypeH").textLabel.equals("Time of day: Destination")) {
@@ -435,9 +445,14 @@ void filterDataScreenPress() {
             if (filterDataScreen.textStoreMap.get("1TypeH").textLabel.equals("Date")) {
                 filterDataScreen.textBoxMap.get("InfoNum").textLabel = "In format DD/MM/YYYY: ";
             }
+            if (filterDataScreen.textStoreMap.get("1TypeH").textLabel.equals("Duration")) {
+                filterDataScreen.textBoxMap.get("InfoNum").textLabel = "In minutes: ";
+            }
             filterDataScreen.textEditMap.get("valueFirstHolder").visible = true;
             filterDataScreen.textBoxMap.get("InfoSmallOne").textLabel = "";
             filterDataScreen.textBoxMap.get("InfoSmallTwo").textLabel = "";
+
+            // deal with various range options
             if (buttonPressed[0].equals("nFilTsingleVal")) {
                 setFilterText1("Equals: ");
             }
@@ -457,7 +472,7 @@ void filterDataScreenPress() {
             }
         }
         if (buttonPressed[0].equals("addFilter")) {
-
+            // check if there is enough info to apply filter, then call requisite functions
             if (filterDataScreen.dropDownMap.get("filterNonNum").visible == true) {
                 if (monthSet.contains(filterDataScreen.textStoreMap.get("1TypeH").textLabel)
                     || filterDataScreen.textStoreMap.get("1TypeH").textLabel.length() > 7 && filterDataScreen.textStoreMap.get("1TypeH").textLabel.substring(0,8).equals("Diverted")
@@ -482,7 +497,6 @@ void filterDataScreenPress() {
                             // if succesful
                             filterDataScreen.buttonMap.get("removeFilter").active = true;
                         }
-                    //}
                 }
             }
             else if (filterDataScreen.dropDownMap.get("filterNum").visible == true) {
@@ -538,6 +552,9 @@ void filterDataScreenPress() {
         if (ifFilterActive()) {
         filterDataScreen.buttonMap.get("addFilter").active = true;
         }
+        else {
+            filterDataScreen.buttonMap.get("addFilter").active = false;
+        }
     }
 }
 
@@ -570,7 +587,6 @@ void handleHomePress(String buttonPressed) {
         OnGraphCreateScreen = false;
         OnGraphShowScreen = false;
         OnbarChartShowScreen = false;
-        OnBarGraphShowScreen = false;
         OnHistogramShowScreen = false;
         OnFilterDataScreen = false;
         OnSearchScreen = false;
@@ -584,6 +600,7 @@ void histogramShowScreenPress() {
     handleHomePress(buttonPressed[0]);
     if (!buttonPressed[0].equals("None") && !buttonPressed[0].equals("Opened")) {
         if (buttonPressed[0].equals("backW")) {
+            // go back if back button was pressed
             OnHistogramShowScreen = false;
             OnGraphCreateScreen = true;
             currentScreen = graphCreateScreen;
@@ -603,6 +620,7 @@ void setFilterText2(String inputText) {
 }
 
 boolean ifFilterActive() {
+    // check if the filter button can be pressed
     return 
     (!filterDataScreen.textStoreMap.get("FTypeH").textLabel.equals(""))
     &&
@@ -643,6 +661,7 @@ boolean isNonNumericalNoTextEdit() {
 }
 
 boolean isLoadGraphActive() {
+    // check if the load graph button can be pressed
     return 
     (graphCreateScreen.textStoreMap.get("gTypeH").textLabel.equals("Scatter Plot")
     && !graphCreateScreen.textStoreMap.get("1dataH").textLabel.equals("")
@@ -708,6 +727,7 @@ void searchScreenPress() {
 
         }
         else {
+            // set the selected column value
             if (buttonPressed[0].equals("all")) selectedColumn = "All";
             if (buttonPressed[0].equals("date")) selectedColumn = "Date";
             if (buttonPressed[0].equals("airline")) selectedColumn = "Airline";

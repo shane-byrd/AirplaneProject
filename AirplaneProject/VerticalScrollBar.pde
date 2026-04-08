@@ -21,7 +21,7 @@ class VerticalScrollBar extends Widget
     }
 
     void draw() {
-        // Calculate value
+        // Calculate value for position based off of xoffset
         stroke(0);
         fill(scrollColor);
         rect(SCREENX - (2*gapX + w), 0, 2*gapX + w, SCREENY  );
@@ -39,7 +39,6 @@ class VerticalScrollBar extends Widget
         rect(SCREENX-gapX-w,gapY + value *(SCREENY - 2*gapY - h),w,h);
         x=SCREENX-gapX-w;
         y=gapY + value *(SCREENY - 2*gapY - h);
-        //rect(SCREENX-gapX-w,gapY,w,h);
         noStroke();
         
     }

@@ -1,8 +1,10 @@
 // initialises screens with appropriate buttons, written by Shane Byrd
 //
+
+// define string arrays to create dropdowns from
 String[][] chooseGraphScatterPlotX = {
     {"scxDistance","Distance"},
-    {"scxDuration","Duration"}//,{"scxYear","Time (year)"}
+    {"scxDuration","Duration"}
 };
 String[][] chooseGraphScatterPlotInteriorX = {
     {"scxDelay","Delay Time >"},
@@ -10,7 +12,7 @@ String[][] chooseGraphScatterPlotInteriorX = {
 };
 String[][] chooseGraphScatterPlotY = {
     {"scyDistance","Distance"},
-    {"scyDuration","Duration"}//,{"scyYear","Time (year)"}
+    {"scyDuration","Duration"}
 };
 String[][] chooseGraphScatterPlotInteriorY = {
     {"scyDelay","Delay Time >"},
@@ -24,22 +26,16 @@ String[][] chooseGraphBarChartCat = {
 String[][] chooseGraphBarChartData = {
     {"bcdDist","Mean Distance"}, {"bcdDelay","Mean delay time"},
     {"bcdDuration","Mean flight duration"},
-    {"bcdDiverted","% Diverted"},//{"bcdCancelled","% Cancelled"},
+    {"bcdDiverted","% Diverted"},
     {"bcdfreq","Frequency"}
 };
 String[][] chooseHistoGramX = {
     {"hsgdDuration","Duration"},{"hsgdDistance","Distance"}
-    //{"hsgdDate","Date"}
 };
 String[][] chooseHistoGramXIDD = {
     {"hsgdDelayTime","Delay Time"},{"hsgdTime","Time of Day"}
 };
-/*
-String[][] filterNumOption = {
-    {"filNumDistance","Distance"},
-    {"filNumYear","Year"}
-};
-*/
+
 String[][] filterNumOption = {
     {"filNumDistance","Distance"},
     {"filNumYear","Date"}
@@ -101,12 +97,12 @@ void loadTableScreen() {
     tableScreen.hasTable = true;
 
     Button prevPageButton = new Button(
-        720, 3, 65, 40, "prevPage", "Previous\nPage",
+        775, 3, 65, 40, "prevPage", "Previous\nPage",
         color(#5a90d6), color(#c25151), color(#000000), smallFont
     );
 
     Button nextPageButton = new Button(
-        800, 3, 65, 40, "nextPage", "Next\nPage",
+        855, 3, 65, 40, "nextPage", "Next\nPage",
         color(#5a90d6), color(#c25151), color(#000000), smallFont
     );
     tableScreen.addButton(nextPageButton);
@@ -228,12 +224,9 @@ void loadTableScreen() {
     sortMenu.addButton("sortDatadepDesc", "Departure Time Descending");
     sortMenu.addButton("sortDataarrAsc", "Arrival Time Ascending");
     sortMenu.addButton("sortDataarrDesc", "Arrival Time Descending");
-    // Jasper (Xubo)
-
     tableScreen.addDropDownMenu(showMenu);
     tableScreen.addDropDownMenu(sortMenu);
 
-    //
     searchScreen.staticRects.add(navBar);
     searchScreen.addButton(homeButton);
     searchScreen.hasSearchTable = true;
@@ -345,9 +338,9 @@ void loadGraphCreateScreen() {
         color(#adadae)  // secondary button
         );
     graphCreateScreen.addButton(homeButton);
-    grcMenu.addButton("bcOption","Bar Chart");
     grcMenu.addButton("scOption","Scatter Plot");
     grcMenu.addButton("hOption","Histogram");
+    grcMenu.addButton("bcOption","Bar Chart");
     grcMenu.addButton("piOption","Pi Chart");
 
     DropDown histogramDataChoose = new DropDown(400,200,250,50,"hsgData","Data",
@@ -628,11 +621,8 @@ void loadGraphCreateScreen() {
 
 
     graphCreateScreen.addButton(loadGraph);
-    //graphCreateScreen.addButton(graphTypeholder);
     graphFirstHolder.visible = false;
     graphSecondHolder.visible = false;
-    //graphCreateScreen.addButton(graphFirstHolder);
-    //graphCreateScreen.addButton(graphSecondHolder);
 }
 void loadGraphShowScreen() {
     graphShowScreen.staticRects.add(navBar);
@@ -668,12 +658,7 @@ void loadBarChartShowScreen() {
 barChartShowScreen.addTextStore(mouseGraphHolder);
 }
 
-void loadBarGraphShowScreen() {
-    barGraphShowScreen.hasBarGraph = true;
-    barGraphShowScreen.staticRects.add(navBar);
-    BarGraph barGraph = new BarGraph(60, 100, SCREENX - 140, SCREENY - 170, flights, mediumFont, smallFont);
-    barGraphShowScreen.barGraph = barGraph;
-}
+
 
 void loadFilterDataScreen() {
     filterDataScreen.staticRects.add(navBar);
@@ -846,28 +831,6 @@ void loadFilterDataScreen() {
     twoTypeH.visible = false;
     oneTypeH.visible = false;
     FTypeH.visible = true;
-    /*
-    valueScndHolder = 2valH
-    valueFstHolder = 1valH
-    scndTypeHolder = 2TypeH
-    fstTypeHolder = 1TypeH
-    typeDataFilterHolder = FTypeH
-    
-    buttonMap.get("typeDataFilterHolder")
-    textStoreMap.get("FTypeH")
-
-    buttonMap.get("fstTypeHolder")
-    textStoreMap.get("1TypeH")
-
-    buttonMap.get("scndTypeHolder")
-    textStoreMap.get("2TypeH")
-
-    buttonMap.get("valueScndHolder")
-    textStoreMap.get("2valH")
-
-    buttonMap.get("valueFstHolder")
-    textStoreMap.get("1valH")
-    */
 
     filterDataScreen.addButton(valueFstHolder);
     filterDataScreen.addButton(valueScndHolder);

@@ -1,4 +1,4 @@
-// class to draw text (useful for avoiding overlap)
+// class to draw text 
 // written By Shane Byrd
 class TextBox {
     float x;

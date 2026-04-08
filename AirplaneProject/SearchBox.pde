@@ -23,26 +23,10 @@ void drawSearchBox() {
 
   noStroke();
 }
-/*
+
 void applyFilters() {
-  filteredFlights.clear();
-
-  for (Flight f : flights) {
-    boolean matchesSearch = matchesSearchFilter(f);
-
-    if (matchesSearch) {
-      filteredFlights.add(f);
-    }
-  }
-    
-
-tableScreen.table.updateDataSize(filteredFlights);
-  XOFFSET = 0;
-  YOFFSET = 0;
-}
-*/
-void applyFilters() {
-  filteredFlights.clear();
+  // apply filters to searchFlights
+  searchFlights.clear();
 
   for (Flight f : flights) {
     boolean matchesSearch = matchesSearchFilter(f);
@@ -50,17 +34,16 @@ void applyFilters() {
     boolean matchesTime = matchesTimeFilter(f);
 
     if (matchesSearch && matchesDistance && matchesTime) {
-      filteredFlights.add(f);
+      searchFlights.add(f);
     }
   }
+  // set searchFlights to empty is the search result is zero
   if (searchApplied == false ) {
     searchFlights = new ArrayList<Flight>();
   }
-  else {
-    searchFlights = filteredFlights;
-  }
   
-  tableScreen.table.updateDataSize(filteredFlights);
+  // update table to match new size
+  tableScreen.table.updateDataSize(searchFlights);
   XOFFSET = 0;
   YOFFSET = 0;
 }

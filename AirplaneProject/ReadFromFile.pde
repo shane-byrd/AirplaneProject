@@ -1,17 +1,37 @@
-// loads flight array from csv file, written by Shane Byrd
+// loads flight array from csv file, written by Shane Byrd, edited by Tommy (Zhihan)
 //
-ArrayList<Flight> readFromFile(String filename) 
+
+
+ArrayList<Flight> readFromFile(String filename)
 {
-    ArrayList<Flight> flights = new ArrayList<Flight>();
-    String[] lines = loadStrings(filename);
-    for (int i = 1; i < lines.length; i++) 
-    {
-        String[] dataPoints = split(lines[i], ",");
-        Flight f = new Flight(dataPoints);
-        if (f.missingData == false) {
-            flights.add(f);
-        }
-        
-    }
+  ArrayList<Flight> flights = new ArrayList<Flight>(600000);
+  BufferedReader reader = createReader(filename);
+
+  if (reader == null) {
     return flights;
+  }
+
+  try {
+    String line = reader.readLine();
+
+    while ((line = reader.readLine()) != null)
+    {
+      if (line.length() == 0) {
+        continue;
+      }
+
+      Flight f = new Flight(line);
+      if (!f.missingData) {
+        flights.add(f);
+      }
+    }
+
+    reader.close();
+  }
+  catch (IOException e)
+  {
+    e.printStackTrace();
+  }
+
+  return flights;
 }

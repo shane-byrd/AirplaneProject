@@ -1,5 +1,5 @@
 // class to represent a screen, and deal with screen interactions, (mouse movement and press) and drawing
-// written by Shane Byrd
+// written by Xubo 
 class Screen {
     ArrayList<Button> buttons;
     ArrayList<TextBox> textBoxes;
@@ -142,6 +142,7 @@ class Screen {
         staticRects.add(sr);
     }
 
+    // Shane byrd additions
     // give idlabel and text label of button or item pressed
     String[] getButtonPressed() {
         String[] returnString = {"None","None"};

@@ -241,7 +241,7 @@ void loadTableScreen() {
     searchScreen.hscroll = hscroll;
     searchScreen.vscroll = vscroll;
     
-    //
+    // end Jasper (Xubo) additions
 }
 
 void loadSearchScreen() {
